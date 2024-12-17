@@ -1,7 +1,7 @@
-name: fishbone
-description: "fishbone chart for flutter (FOR FUN)."
+name: flow_compose
+description: "flow chart for flutter (FOR FUN)."
 version: 0.0.1
-homepage: none
+homepage: https://github.com/guchengxi1994/fishbone
 
 environment:
   sdk: ^3.5.4
@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

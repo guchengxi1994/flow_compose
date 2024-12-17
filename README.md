@@ -1,1 +1,1 @@
-fishbone chart for flutter (FOR FUN)
+flow chart for flutter (FOR FUN).

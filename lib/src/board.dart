@@ -1,29 +1,32 @@
-import 'package:fishbone/fishbone.dart';
+import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
-import 'fishbone.dart';
-
-class BoardState<T> {
+class BoardState<T, E> {
   final double scaleFactor;
   final Offset dragOffset;
   final List<T> data;
+  final List<E> edges;
 
   BoardState({
     this.scaleFactor = 1.0,
     this.dragOffset = Offset.zero,
     this.data = const [],
+    this.edges = const [],
   });
 
   BoardState copyWith({
     double? scaleFactor,
     Offset? dragOffset,
     List<T>? data,
+    List<E>? edges,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,
       dragOffset: dragOffset ?? this.dragOffset,
       data: data ?? this.data,
+      edges: edges ?? this.edges,
     );
   }
 
@@ -90,6 +93,53 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     );
   }
 
+  // ignore: avoid_init_to_null
+  String? currentUuid = null;
+  var uuid = Uuid();
+
+  void _modifyFakeEdge(BaseNode start, Offset offset) {
+    currentUuid ??= uuid.v4();
+    // print("start.outputPoint ${start.outputPoint}");
+
+    Edge? fakeEdge = (boardNotifier.value.edges as List<Edge>)
+        .where(
+          (element) => element.uuid == currentUuid,
+        )
+        .firstOrNull;
+    if (fakeEdge != null) {
+      fakeEdge = fakeEdge.copyWith(end: fakeEdge.end + offset);
+      boardNotifier.value = boardNotifier.value.copyWith(
+        edges: (boardNotifier.value.edges as List<Edge>).map((e) {
+          if (e.uuid == fakeEdge!.uuid) {
+            return fakeEdge;
+          }
+          return e;
+        }).toList(),
+      );
+    } else {
+      fakeEdge = Edge(
+        source: start.uuid,
+        end: start.outputPoint,
+        uuid: currentUuid!,
+        start: start.outputPoint,
+      );
+      List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+      edges.add(fakeEdge);
+      boardNotifier.value = boardNotifier.value.copyWith(
+        edges: edges,
+      );
+    }
+  }
+
+  void _handleNodeEdgeCancel() {
+    List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+    edges.removeWhere((element) => element.uuid == currentUuid);
+    boardNotifier.value = boardNotifier.value.copyWith(
+      edges: edges,
+    );
+    currentUuid = null;
+  }
+
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: (boardNotifier.value.data as List<BaseNode>).map((e) {
@@ -141,6 +191,12 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                               _handleNodeDrag(
                                   e.uuid, offset, state.scaleFactor);
                             },
+                            onNodeEdgeCreate: (offset) {
+                              _modifyFakeEdge(e, offset);
+                            },
+                            onNodeEdgeCancel: () {
+                              _handleNodeEdgeCancel();
+                            },
                           );
                         })
                       ],
@@ -152,7 +208,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                   painter: InfiniteCanvasPainter(
                       offset: state.dragOffset,
                       scale: state.scaleFactor,
-                      data: state.data),
+                      data: state.data,
+                      edges: state.edges),
                   child: child,
                 );
               },
@@ -160,13 +217,17 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 }
 
-class InfiniteCanvasPainter<T> extends CustomPainter {
+class InfiniteCanvasPainter<T, E> extends CustomPainter {
   final Offset offset;
   final double scale;
   final List<T> data;
+  final List<E> edges;
 
   InfiniteCanvasPainter(
-      {required this.offset, required this.scale, required this.data});
+      {required this.offset,
+      required this.scale,
+      required this.data,
+      required this.edges});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -202,6 +263,12 @@ class InfiniteCanvasPainter<T> extends CustomPainter {
     if (data.isNotEmpty) {
       if (data[0] is FishboneNode) {
         paintFishbone(canvas, size, data as List<FishboneNode>);
+      }
+    }
+
+    if (edges.isNotEmpty) {
+      for (Edge e in edges as List<Edge>) {
+        paintBezierEdge(canvas, scale, e.start, e.end);
       }
     }
   }
