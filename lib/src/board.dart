@@ -1,5 +1,6 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
+import 'package:flow_compose/src/nodes/node_list_widget.dart';
 import 'package:flow_compose/src/nodes/nodes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -110,6 +111,12 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid = null;
   }
 
+  void _addNewNode(INode node) {
+    boardNotifier.value = boardNotifier.value.copyWith(
+      data: boardNotifier.value.data.toList()..add(node),
+    );
+  }
+
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
     var data = boardNotifier.value.data;
     data = data.map((e) {
@@ -158,38 +165,55 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
             child: ValueListenableBuilder(
               valueListenable: boardNotifier,
               builder: (context, state, child) {
-                Widget child = Container();
-                if (state.data.isNotEmpty) {
-                  child = Stack(
-                    children: [
-                      Container(
-                        color: Colors.transparent,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                      ...state.data.map((e) {
-                        return NodeWidget<INode>(
-                          node: e,
-                          dragOffset: state.dragOffset,
-                          factor: state.scaleFactor,
-                          onNodeDrag: (offset) {
-                            _handleNodeDrag(
-                                e.getUuid(), offset, state.scaleFactor);
-                          },
-                          onNodeEdgeCreateOrModify: (offset) {
-                            _modifyFakeEdge(e, offset);
-                          },
-                          onNodeEdgeCancel: () {
-                            _handleNodeEdgeCancel();
-                          },
-                          onEdgeAccept: (from, to) {
-                            _paintEdgeFromAToB(from, to);
-                          },
-                        );
-                      })
-                    ],
-                  );
-                }
+                Widget child = DragTarget<INode>(
+                  builder: (c, _, __) {
+                    return Stack(
+                      children: [
+                        Container(
+                          color: Colors.transparent,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        ...state.data.map((e) {
+                          return NodeWidget<INode>(
+                            node: e,
+                            dragOffset: state.dragOffset,
+                            factor: state.scaleFactor,
+                            onNodeDrag: (offset) {
+                              _handleNodeDrag(
+                                  e.getUuid(), offset, state.scaleFactor);
+                            },
+                            onNodeEdgeCreateOrModify: (offset) {
+                              _modifyFakeEdge(e, offset);
+                            },
+                            onNodeEdgeCancel: () {
+                              _handleNodeEdgeCancel();
+                            },
+                            onEdgeAccept: (from, to) {
+                              _paintEdgeFromAToB(from, to);
+                            },
+                          );
+                        }),
+                        Positioned(
+                            left: 20,
+                            top: 20,
+                            child: NodeListWidget(
+                              nodes: widget.controller?.nodes ?? [],
+                            ))
+                      ],
+                    );
+                  },
+                  onWillAcceptWithDetails: (details) {
+                    debugPrint("will accept details ${details.offset}");
+                    return true;
+                  },
+                  onAcceptWithDetails: (details) {
+                    debugPrint("accept details ${details.offset}");
+                    final node = details.data
+                        .copyWith(uuid: uuid.v4(), offset: details.offset);
+                    _addNewNode(node);
+                  },
+                );
 
                 return CustomPaint(
                   painter: InfiniteCanvasPainter(
