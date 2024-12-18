@@ -111,6 +111,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid = null;
   }
 
+  @Features(features: [FeaturesType.nodeDrag])
   void _addNewNode(INode node) {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: boardNotifier.value.data.toList()..add(node),
@@ -203,14 +204,14 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                       ],
                     );
                   },
-                  onWillAcceptWithDetails: (details) {
-                    debugPrint("will accept details ${details.offset}");
-                    return true;
-                  },
                   onAcceptWithDetails: (details) {
-                    debugPrint("accept details ${details.offset}");
-                    final node = details.data
-                        .copyWith(uuid: uuid.v4(), offset: details.offset);
+                    debugPrint(
+                        "drag offset ${state.dragOffset}  accept details ${details.offset}  abslute ${details.offset - state.dragOffset}");
+                    final node = details.data.copyWith(
+                        uuid: uuid.v4(),
+                        offset: (details.offset - state.dragOffset) *
+                            1 /
+                            state.scaleFactor);
                     _addNewNode(node);
                   },
                 );
