@@ -40,19 +40,19 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _paintEdgeFromAToB(String a, String b) {
-    BaseNode? aNode = boardNotifier.value.data
-        .where((element) => element.uuid == a)
-        .firstOrNull as BaseNode?;
+    INode? aNode = boardNotifier.value.data
+        .where((element) => element.getUuid() == a)
+        .firstOrNull;
 
-    BaseNode? bNode = boardNotifier.value.data
-        .where((element) => element.uuid == b)
-        .firstOrNull as BaseNode?;
+    INode? bNode = boardNotifier.value.data
+        .where((element) => element.getUuid() == b)
+        .firstOrNull;
 
     if (aNode != null && bNode != null) {
       Edge edge = Edge(
           uuid: uuid.v4(),
-          source: aNode.uuid,
-          target: bNode.uuid,
+          source: aNode.getUuid(),
+          target: bNode.getUuid(),
           start: aNode.outputPoint,
           end: bNode.inputPoint);
       Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
@@ -66,7 +66,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   var uuid = Uuid();
 
   @Features(features: [FeaturesType.all])
-  void _modifyFakeEdge(BaseNode start, Offset offset) {
+  void _modifyFakeEdge(INode start, Offset offset) {
     currentUuid ??= uuid.v4();
     // print("start.outputPoint ${start.outputPoint}");
 
@@ -88,7 +88,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       );
     } else {
       fakeEdge = Edge(
-        source: start.uuid,
+        source: start.getUuid(),
         end: start.outputPoint,
         uuid: currentUuid!,
         start: start.outputPoint,
@@ -111,9 +111,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
-    var data = boardNotifier.value.data as List<BaseNode>;
+    var data = boardNotifier.value.data;
     data = data.map((e) {
-      if (e.uuid == uuid) {
+      if (e.getUuid() == uuid) {
         return e.copyWith(offset: e.offset + offset * 1 / factor);
       }
       return e;
@@ -160,37 +160,35 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
               builder: (context, state, child) {
                 Widget child = Container();
                 if (state.data.isNotEmpty) {
-                  if (state.data[0] is BaseNode) {
-                    child = Stack(
-                      children: [
-                        Container(
-                          color: Colors.transparent,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                        ...state.data.map((e) {
-                          return NodeWidget<BaseNode>(
-                            node: e,
-                            dragOffset: state.dragOffset,
-                            factor: state.scaleFactor,
-                            onNodeDrag: (offset) {
-                              _handleNodeDrag(
-                                  e.uuid, offset, state.scaleFactor);
-                            },
-                            onNodeEdgeCreateOrModify: (offset) {
-                              _modifyFakeEdge(e, offset);
-                            },
-                            onNodeEdgeCancel: () {
-                              _handleNodeEdgeCancel();
-                            },
-                            onEdgeAccept: (from, to) {
-                              _paintEdgeFromAToB(from, to);
-                            },
-                          );
-                        })
-                      ],
-                    );
-                  }
+                  child = Stack(
+                    children: [
+                      Container(
+                        color: Colors.transparent,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      ...state.data.map((e) {
+                        return NodeWidget<INode>(
+                          node: e,
+                          dragOffset: state.dragOffset,
+                          factor: state.scaleFactor,
+                          onNodeDrag: (offset) {
+                            _handleNodeDrag(
+                                e.getUuid(), offset, state.scaleFactor);
+                          },
+                          onNodeEdgeCreateOrModify: (offset) {
+                            _modifyFakeEdge(e, offset);
+                          },
+                          onNodeEdgeCancel: () {
+                            _handleNodeEdgeCancel();
+                          },
+                          onEdgeAccept: (from, to) {
+                            _paintEdgeFromAToB(from, to);
+                          },
+                        );
+                      })
+                    ],
+                  );
                 }
 
                 return CustomPaint(

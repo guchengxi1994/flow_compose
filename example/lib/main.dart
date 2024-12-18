@@ -31,8 +31,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final controller = BoardController(
-      initialState:
-          BoardState<BaseNode, Edge>(data: BaseNode.fake(), edges: {}));
+      initialState: BoardState<Edge>(data: BaseNode.fake(), edges: {}));
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done

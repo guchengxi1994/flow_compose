@@ -1,9 +1,10 @@
+import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
-class BoardState<T, E> {
+class BoardState<E> {
   final double scaleFactor;
   final Offset dragOffset;
-  final List<T> data;
+  final List<INode> data;
   final Set<E> edges;
 
   BoardState({
@@ -16,7 +17,7 @@ class BoardState<T, E> {
   BoardState copyWith({
     double? scaleFactor,
     Offset? dragOffset,
-    List<T>? data,
+    List<INode>? data,
     Set<E>? edges,
   }) {
     return BoardState(
