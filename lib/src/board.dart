@@ -1,4 +1,5 @@
 import 'package:flow_compose/flow_compose.dart';
+import 'package:flow_compose/src/annotation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
@@ -38,10 +39,33 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         .copyWith(dragOffset: boardNotifier.value.dragOffset + offset);
   }
 
+  void _paintEdgeFromAToB(String a, String b) {
+    BaseNode? aNode = boardNotifier.value.data
+        .where((element) => element.uuid == a)
+        .firstOrNull as BaseNode?;
+
+    BaseNode? bNode = boardNotifier.value.data
+        .where((element) => element.uuid == b)
+        .firstOrNull as BaseNode?;
+
+    if (aNode != null && bNode != null) {
+      Edge edge = Edge(
+          uuid: uuid.v4(),
+          source: aNode.uuid,
+          target: bNode.uuid,
+          start: aNode.outputPoint,
+          end: bNode.inputPoint);
+      List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+      edges.add(edge);
+      boardNotifier.value = boardNotifier.value.copyWith(edges: edges);
+    }
+  }
+
   // ignore: avoid_init_to_null
   String? currentUuid = null;
   var uuid = Uuid();
 
+  @Features(features: [FeaturesType.all])
   void _modifyFakeEdge(BaseNode start, Offset offset) {
     currentUuid ??= uuid.v4();
     // print("start.outputPoint ${start.outputPoint}");
@@ -87,14 +111,29 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
-    boardNotifier.value = boardNotifier.value.copyWith(
-      data: (boardNotifier.value.data as List<BaseNode>).map((e) {
-        if (e.uuid == uuid) {
-          return e.copyWith(offset: e.offset + offset * 1 / factor);
+    var data = boardNotifier.value.data as List<BaseNode>;
+    data = data.map((e) {
+      if (e.uuid == uuid) {
+        return e.copyWith(offset: e.offset + offset * 1 / factor);
+      }
+      return e;
+    }).toList();
+
+    var edges = boardNotifier.value.edges as List<Edge>;
+    if (edges.isNotEmpty) {
+      edges = edges.map((e) {
+        if (e.source == uuid) {
+          return e.copyWith(start: e.start + offset * 1 / factor);
+        }
+        if (e.target == uuid) {
+          return e.copyWith(end: e.end + offset * 1 / factor);
         }
         return e;
-      }).toList(),
-    );
+      }).toList();
+    }
+
+    boardNotifier.value =
+        boardNotifier.value.copyWith(data: data, edges: edges);
   }
 
   @override
@@ -137,11 +176,14 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                               _handleNodeDrag(
                                   e.uuid, offset, state.scaleFactor);
                             },
-                            onNodeEdgeCreate: (offset) {
+                            onNodeEdgeCreateOrModify: (offset) {
                               _modifyFakeEdge(e, offset);
                             },
                             onNodeEdgeCancel: () {
                               _handleNodeEdgeCancel();
+                            },
+                            onEdgeAccept: (from, to) {
+                              _paintEdgeFromAToB(from, to);
                             },
                           );
                         })
@@ -214,7 +256,7 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
 
     if (edges.isNotEmpty) {
       for (Edge e in edges as List<Edge>) {
-        paintBezierEdge(canvas, scale, e.start, e.end, offset);
+        paintBezierEdgeWithArrow(canvas, scale, e.start, e.end, offset);
       }
     }
   }

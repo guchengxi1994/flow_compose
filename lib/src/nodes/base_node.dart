@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 typedef OnNodeDrag = void Function(Offset offset);
 // typedef OnBoardSizeChange = void Function(double factor);
-typedef OnNodeEdgeCreate = void Function(Offset offset);
+typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
+
+typedef OnEdgeAccept = void Function(String from, String to);
 
 class BaseNode {
   final double width;
@@ -36,6 +38,14 @@ class BaseNode {
           label: "1-1",
           uuid: "1-1",
           depth: 1,
+          offset: Offset(0, 0),
+          children: []),
+      BaseNode(
+          width: 300,
+          height: 400,
+          label: "2-2",
+          uuid: "2-2",
+          depth: 1,
           offset: Offset(500, 500),
           children: [])
     ];
@@ -49,8 +59,9 @@ class BaseNode {
     required Offset dragOffset,
     required double factor,
     required OnNodeDrag onNodeDrag,
-    required OnNodeEdgeCreate onNodeEdgeCreate,
+    required OnNodeEdgeCreateOrModify onNodeEdgeCreateOrModify,
     required VoidCallback onNodeEdgeCancel,
+    required OnEdgeAccept onEdgeAccept,
   }) {
     return Positioned(
       left: offset.dx * factor + dragOffset.dx,
@@ -80,7 +91,7 @@ class BaseNode {
                 top: 0,
                 child: GestureDetector(
                     onTap: () {
-                      print("delete $uuid");
+                      debugPrint("delete $uuid");
                     },
                     child: Container(
                       width: 24,
@@ -97,9 +108,10 @@ class BaseNode {
                 right: 0,
                 top: 0.5 * height * factor,
                 child: Draggable(
+                    data: uuid,
                     onDragUpdate: (details) {
                       // print(details);
-                      onNodeEdgeCreate(details.delta);
+                      onNodeEdgeCreateOrModify(details.delta);
                     },
                     onDragEnd: (details) {
                       onNodeEdgeCancel();
@@ -120,13 +132,21 @@ class BaseNode {
             Positioned(
                 left: 0,
                 top: 0.5 * height * factor,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(Icons.input),
+                child: DragTarget<String>(
+                  builder: (c, _, __) {
+                    return Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.input),
+                    );
+                  },
+                  onAcceptWithDetails: (data) {
+                    debugPrint("accept ${data.data} this is $uuid");
+                    onEdgeAccept(data.data, uuid);
+                  },
                 ))
           ],
         ),

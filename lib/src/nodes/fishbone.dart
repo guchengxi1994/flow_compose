@@ -1,9 +1,11 @@
+import 'package:flow_compose/src/annotation.dart';
 import 'package:flutter/material.dart';
 
 typedef HiddenBuilder = Widget Function(BuildContext ctx, String uuid);
 
 enum NodePosition { up, down }
 
+@NotReady()
 class FishboneNode {
   final String label;
   final double angle;
