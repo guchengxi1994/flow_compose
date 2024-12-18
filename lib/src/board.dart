@@ -111,7 +111,23 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid = null;
   }
 
-  @Features(features: [FeaturesType.nodeDrag])
+  void _handleNodeDelete(String uuid) {
+    Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+    List<INode> nodes = boardNotifier.value.data;
+    nodes.removeWhere((element) => element.uuid == uuid);
+    edges.removeWhere(
+        (element) => element.source == uuid || element.target == uuid);
+    boardNotifier.value = boardNotifier.value.copyWith(
+      edges: edges.toSet(),
+      data: nodes,
+    );
+  }
+
+  @Features(features: [
+    FeaturesType.nodeDrag,
+    FeaturesType.boardDrag,
+    FeaturesType.boardScaleChange
+  ])
   void _addNewNode(INode node) {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: boardNotifier.value.data.toList()..add(node),
@@ -180,6 +196,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                             node: e,
                             dragOffset: state.dragOffset,
                             factor: state.scaleFactor,
+                            onNodeDelete: (u) {
+                              _handleNodeDelete(u);
+                            },
                             onNodeDrag: (offset) {
                               _handleNodeDrag(
                                   e.getUuid(), offset, state.scaleFactor);

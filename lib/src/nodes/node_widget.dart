@@ -11,7 +11,8 @@ class NodeWidget<T extends INode> extends StatefulWidget {
       required this.onNodeDrag,
       required this.onNodeEdgeCreateOrModify,
       required this.onNodeEdgeCancel,
-      required this.onEdgeAccept});
+      required this.onEdgeAccept,
+      required this.onNodeDelete});
   final T node;
   final Offset dragOffset;
   final double factor;
@@ -19,6 +20,7 @@ class NodeWidget<T extends INode> extends StatefulWidget {
   final OnNodeEdgeCreateOrModify onNodeEdgeCreateOrModify;
   final VoidCallback onNodeEdgeCancel;
   final OnEdgeAccept onEdgeAccept;
+  final OnNodeDelete onNodeDelete;
 
   @override
   State<NodeWidget> createState() => _NodeWidgetState();
@@ -64,9 +66,10 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
             Positioned(
                 right: 0,
                 top: 0,
-                child: GestureDetector(
+                child: InkWell(
                     onTap: () {
                       debugPrint("delete $uuid");
+                      widget.onNodeDelete(uuid);
                     },
                     child: Container(
                       width: 24,

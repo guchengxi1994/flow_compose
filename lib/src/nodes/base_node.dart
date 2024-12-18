@@ -7,6 +7,8 @@ typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
 
 typedef OnEdgeAccept = void Function(String from, String to);
 
+typedef OnNodeDelete = void Function(String uuid);
+
 class BaseNode extends INode {
   BaseNode(
       {required super.label,
