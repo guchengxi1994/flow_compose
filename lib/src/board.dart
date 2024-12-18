@@ -1,10 +1,10 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
+import 'package:flow_compose/src/nodes/nodes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-import 'nodes/fishbone.dart';
 import 'paints/paints.dart';
 
 class InfiniteDrawingBoard extends StatefulWidget {
@@ -55,9 +55,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
           target: bNode.uuid,
           start: aNode.outputPoint,
           end: bNode.inputPoint);
-      List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+      Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
       edges.add(edge);
-      boardNotifier.value = boardNotifier.value.copyWith(edges: edges);
+      boardNotifier.value = boardNotifier.value.copyWith(edges: edges.toSet());
     }
   }
 
@@ -70,7 +70,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid ??= uuid.v4();
     // print("start.outputPoint ${start.outputPoint}");
 
-    Edge? fakeEdge = (boardNotifier.value.edges as List<Edge>)
+    Edge? fakeEdge = (boardNotifier.value.edges as Set<Edge>)
         .where(
           (element) => element.uuid == currentUuid,
         )
@@ -79,12 +79,12 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       fakeEdge = fakeEdge.copyWith(
           end: fakeEdge.end + offset * 1 / boardNotifier.value.scaleFactor);
       boardNotifier.value = boardNotifier.value.copyWith(
-        edges: (boardNotifier.value.edges as List<Edge>).map((e) {
+        edges: (boardNotifier.value.edges as Set<Edge>).map((e) {
           if (e.uuid == fakeEdge!.uuid) {
             return fakeEdge;
           }
           return e;
-        }).toList(),
+        }).toSet(),
       );
     } else {
       fakeEdge = Edge(
@@ -93,19 +93,19 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         uuid: currentUuid!,
         start: start.outputPoint,
       );
-      List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+      Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
       edges.add(fakeEdge);
       boardNotifier.value = boardNotifier.value.copyWith(
-        edges: edges,
+        edges: edges.toSet(),
       );
     }
   }
 
   void _handleNodeEdgeCancel() {
-    List<Edge> edges = boardNotifier.value.edges as List<Edge>;
+    Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
     edges.removeWhere((element) => element.uuid == currentUuid);
     boardNotifier.value = boardNotifier.value.copyWith(
-      edges: edges,
+      edges: edges.toSet(),
     );
     currentUuid = null;
   }
@@ -119,7 +119,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       return e;
     }).toList();
 
-    var edges = boardNotifier.value.edges as List<Edge>;
+    var edges = boardNotifier.value.edges as Set<Edge>;
     if (edges.isNotEmpty) {
       edges = edges.map((e) {
         if (e.source == uuid) {
@@ -129,11 +129,11 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
           return e.copyWith(end: e.end + offset * 1 / factor);
         }
         return e;
-      }).toList();
+      }).toSet();
     }
 
     boardNotifier.value =
-        boardNotifier.value.copyWith(data: data, edges: edges);
+        boardNotifier.value.copyWith(data: data, edges: edges.toSet());
   }
 
   @override
@@ -169,7 +169,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                           height: double.infinity,
                         ),
                         ...state.data.map((e) {
-                          return (e as BaseNode).build(
+                          return NodeWidget<BaseNode>(
+                            node: e,
                             dragOffset: state.dragOffset,
                             factor: state.scaleFactor,
                             onNodeDrag: (offset) {
@@ -209,7 +210,7 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
   final Offset offset;
   final double scale;
   final List<T> data;
-  final List<E> edges;
+  final Set<E> edges;
 
   InfiniteCanvasPainter(
       {required this.offset,
@@ -255,7 +256,7 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
     // }
 
     if (edges.isNotEmpty) {
-      for (Edge e in edges as List<Edge>) {
+      for (Edge e in edges as Set<Edge>) {
         paintBezierEdgeWithArrow(canvas, scale, e.start, e.end, offset);
       }
     }

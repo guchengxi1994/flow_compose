@@ -4,20 +4,20 @@ class BoardState<T, E> {
   final double scaleFactor;
   final Offset dragOffset;
   final List<T> data;
-  final List<E> edges;
+  final Set<E> edges;
 
   BoardState({
     this.scaleFactor = 1.0,
     this.dragOffset = Offset.zero,
     this.data = const [],
-    this.edges = const [],
+    this.edges = const {},
   });
 
   BoardState copyWith({
     double? scaleFactor,
     Offset? dragOffset,
     List<T>? data,
-    List<E>? edges,
+    Set<E>? edges,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,

@@ -55,6 +55,7 @@ class BaseNode {
 
   Offset get inputPoint => Offset(offset.dx, offset.dy + 0.5 * height);
 
+  @Deprecated("use [NodeWidget] instead")
   Widget build({
     required Offset dragOffset,
     required double factor,
@@ -183,6 +184,11 @@ class Edge {
   final Offset start;
   final Offset end;
 
+  @override
+  bool operator ==(Object other) {
+    return other is Edge && other.source == source && other.target == target;
+  }
+
   Edge(
       {required this.uuid,
       required this.source,
@@ -210,4 +216,12 @@ class Edge {
       end: end ?? this.end,
     );
   }
+
+  @override
+  int get hashCode =>
+      uuid.hashCode ^
+      source.hashCode ^
+      target.hashCode ^
+      start.hashCode ^
+      end.hashCode;
 }
