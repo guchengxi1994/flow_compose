@@ -19,7 +19,7 @@ jobs:
         run: |
           cd example/
           flutter pub get
-          flutter build web --release --base-href="/flow-compose-preview/"  --web-renderer html
+          flutter build web --release --base-href="/flow_compose/"  --web-renderer html
       
       - name: "Web Deploy 🚀"
         # https://github.com/JamesIves/github-pages-deploy-action
