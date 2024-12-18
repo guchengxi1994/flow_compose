@@ -191,19 +191,3 @@ class Edge {
     );
   }
 }
-
-void paintBezierEdge(Canvas canvas, double scale, Offset start, Offset end) {
-  // print("paintBezierEdge $start $end");
-
-  var controlPoint = Offset(start.dx + (end.dx - start.dx) / 2, start.dy);
-  final paint = Paint()
-    ..color = Colors.blue
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 4.0;
-
-  final path = Path()
-    ..moveTo(start.dx, start.dy)
-    ..quadraticBezierTo(controlPoint.dx, controlPoint.dy, end.dx, end.dy);
-
-  canvas.drawPath(path, paint);
-}

@@ -3,62 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class BoardState<T, E> {
-  final double scaleFactor;
-  final Offset dragOffset;
-  final List<T> data;
-  final List<E> edges;
-
-  BoardState({
-    this.scaleFactor = 1.0,
-    this.dragOffset = Offset.zero,
-    this.data = const [],
-    this.edges = const [],
-  });
-
-  BoardState copyWith({
-    double? scaleFactor,
-    Offset? dragOffset,
-    List<T>? data,
-    List<E>? edges,
-  }) {
-    return BoardState(
-      scaleFactor: scaleFactor ?? this.scaleFactor,
-      dragOffset: dragOffset ?? this.dragOffset,
-      data: data ?? this.data,
-      edges: edges ?? this.edges,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'BoardState{scaleFactor: $scaleFactor, dragOffset: $dragOffset}';
-  }
-}
-
-class BoardController {
-  final ValueNotifier<BoardState> state;
-
-  BoardController({
-    BoardState? initialState,
-  }) : state = ValueNotifier(initialState ?? BoardState());
-
-  BoardState get value => state.value;
-
-  set value(BoardState newValue) {
-    state.value = newValue;
-  }
-
-  void reCenter() {
-    state.value = state.value.copyWith(
-      dragOffset: Offset.zero,
-    );
-  }
-
-  void dispose() {
-    state.dispose();
-  }
-}
+import 'nodes/fishbone.dart';
+import 'paints/paints.dart';
 
 class InfiniteDrawingBoard extends StatefulWidget {
   const InfiniteDrawingBoard({super.key, this.controller});
@@ -88,9 +34,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _handleDragUpdate(Offset offset) {
-    boardNotifier.value = boardNotifier.value.copyWith(
-      dragOffset: boardNotifier.value.dragOffset + offset,
-    );
+    boardNotifier.value = boardNotifier.value
+        .copyWith(dragOffset: boardNotifier.value.dragOffset + offset);
   }
 
   // ignore: avoid_init_to_null
@@ -107,7 +52,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         )
         .firstOrNull;
     if (fakeEdge != null) {
-      fakeEdge = fakeEdge.copyWith(end: fakeEdge.end + offset);
+      fakeEdge = fakeEdge.copyWith(
+          end: fakeEdge.end + offset * 1 / boardNotifier.value.scaleFactor);
       boardNotifier.value = boardNotifier.value.copyWith(
         edges: (boardNotifier.value.edges as List<Edge>).map((e) {
           if (e.uuid == fakeEdge!.uuid) {
@@ -260,19 +206,20 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
 
     canvas.restore();
 
-    if (data.isNotEmpty) {
-      if (data[0] is FishboneNode) {
-        paintFishbone(canvas, size, data as List<FishboneNode>);
-      }
-    }
+    // if (data.isNotEmpty) {
+    //   if (data[0] is FishboneNode) {
+    //     paintFishbone(canvas, size, data as List<FishboneNode>);
+    //   }
+    // }
 
     if (edges.isNotEmpty) {
       for (Edge e in edges as List<Edge>) {
-        paintBezierEdge(canvas, scale, e.start, e.end);
+        paintBezierEdge(canvas, scale, e.start, e.end, offset);
       }
     }
   }
 
+  @Deprecated("for test")
   void paintFishbone(Canvas canvas, Size size, List<FishboneNode> data) {
     paintMain(canvas, size, data, offset, scale);
   }
