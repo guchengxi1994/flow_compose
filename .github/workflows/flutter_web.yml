@@ -15,6 +15,13 @@ jobs:
         with:
           flutter-version: 3.24.5
       
+      - name: Bump build number
+        run: |
+          flutter pub global activate cider
+      
+      - name: Set tag name
+        run: echo "tag_name=v$(cider version)" >> $GITHUB_ENV
+      
       - name: "Web Build 🔧"
         run: |
           cd example/
@@ -27,3 +34,11 @@ jobs:
         with:
           branch: gh-pages
           folder: ./example/build/web
+
+      - name: Publish release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          generateReleaseNotes: true
+          tag: ${{ env.tag_name }}
+          token: ${{ secrets.RELEASE_TOKEN }}

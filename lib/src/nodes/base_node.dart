@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 typedef OnNodeDrag = void Function(Offset offset);
 // typedef OnBoardSizeChange = void Function(double factor);
-typedef OnNodeEdgeCreate = void Function(Offset offset);
+typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
+
+typedef OnEdgeAccept = void Function(String from, String to);
 
 class BaseNode {
   final double width;
@@ -36,6 +38,14 @@ class BaseNode {
           label: "1-1",
           uuid: "1-1",
           depth: 1,
+          offset: Offset(0, 0),
+          children: []),
+      BaseNode(
+          width: 300,
+          height: 400,
+          label: "2-2",
+          uuid: "2-2",
+          depth: 1,
           offset: Offset(500, 500),
           children: [])
     ];
@@ -45,12 +55,14 @@ class BaseNode {
 
   Offset get inputPoint => Offset(offset.dx, offset.dy + 0.5 * height);
 
+  @Deprecated("use [NodeWidget] instead")
   Widget build({
     required Offset dragOffset,
     required double factor,
     required OnNodeDrag onNodeDrag,
-    required OnNodeEdgeCreate onNodeEdgeCreate,
+    required OnNodeEdgeCreateOrModify onNodeEdgeCreateOrModify,
     required VoidCallback onNodeEdgeCancel,
+    required OnEdgeAccept onEdgeAccept,
   }) {
     return Positioned(
       left: offset.dx * factor + dragOffset.dx,
@@ -80,7 +92,7 @@ class BaseNode {
                 top: 0,
                 child: GestureDetector(
                     onTap: () {
-                      print("delete $uuid");
+                      debugPrint("delete $uuid");
                     },
                     child: Container(
                       width: 24,
@@ -97,9 +109,10 @@ class BaseNode {
                 right: 0,
                 top: 0.5 * height * factor,
                 child: Draggable(
+                    data: uuid,
                     onDragUpdate: (details) {
                       // print(details);
-                      onNodeEdgeCreate(details.delta);
+                      onNodeEdgeCreateOrModify(details.delta);
                     },
                     onDragEnd: (details) {
                       onNodeEdgeCancel();
@@ -120,13 +133,21 @@ class BaseNode {
             Positioned(
                 left: 0,
                 top: 0.5 * height * factor,
-                child: Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(Icons.input),
+                child: DragTarget<String>(
+                  builder: (c, _, __) {
+                    return Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.input),
+                    );
+                  },
+                  onAcceptWithDetails: (data) {
+                    debugPrint("accept ${data.data} this is $uuid");
+                    onEdgeAccept(data.data, uuid);
+                  },
                 ))
           ],
         ),
@@ -163,6 +184,11 @@ class Edge {
   final Offset start;
   final Offset end;
 
+  @override
+  bool operator ==(Object other) {
+    return other is Edge && other.source == source && other.target == target;
+  }
+
   Edge(
       {required this.uuid,
       required this.source,
@@ -190,20 +216,12 @@ class Edge {
       end: end ?? this.end,
     );
   }
-}
 
-void paintBezierEdge(Canvas canvas, double scale, Offset start, Offset end) {
-  // print("paintBezierEdge $start $end");
-
-  var controlPoint = Offset(start.dx + (end.dx - start.dx) / 2, start.dy);
-  final paint = Paint()
-    ..color = Colors.blue
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 4.0;
-
-  final path = Path()
-    ..moveTo(start.dx, start.dy)
-    ..quadraticBezierTo(controlPoint.dx, controlPoint.dy, end.dx, end.dy);
-
-  canvas.drawPath(path, paint);
+  @override
+  int get hashCode =>
+      uuid.hashCode ^
+      source.hashCode ^
+      target.hashCode ^
+      start.hashCode ^
+      end.hashCode;
 }
