@@ -1,3 +1,4 @@
+import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
 typedef OnNodeDrag = void Function(Offset offset);
@@ -6,24 +7,15 @@ typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
 
 typedef OnEdgeAccept = void Function(String from, String to);
 
-class BaseNode {
-  final double width;
-  final double height;
-  final String label;
-  final String uuid;
-  final int depth;
-  final Offset offset;
-  final List<BaseNode> children;
-
-  BaseNode({
-    this.width = 300,
-    this.height = 400,
-    required this.label,
-    required this.uuid,
-    required this.depth,
-    required this.offset,
-    this.children = const [],
-  });
+class BaseNode extends INode {
+  BaseNode(
+      {required super.label,
+      required super.uuid,
+      required super.depth,
+      required super.offset,
+      super.width,
+      super.height,
+      super.children});
 
   @override
   String toString() {
@@ -50,10 +42,6 @@ class BaseNode {
           children: [])
     ];
   }
-
-  Offset get outputPoint => Offset(offset.dx + width, offset.dy + 0.5 * height);
-
-  Offset get inputPoint => Offset(offset.dx, offset.dy + 0.5 * height);
 
   @Deprecated("use [NodeWidget] instead")
   Widget build({
@@ -155,15 +143,16 @@ class BaseNode {
     );
   }
 
-  BaseNode copyWith({
-    double? width,
-    double? height,
-    String? label,
-    String? uuid,
-    int? depth,
-    Offset? offset,
-    List<BaseNode>? children,
-  }) {
+  @override
+  INode copyWith(
+      {double? width,
+      double? height,
+      String? label,
+      String? uuid,
+      int? depth,
+      Offset? offset,
+      List<INode>? children,
+      Map<String, dynamic>? data}) {
     return BaseNode(
       width: width ?? this.width,
       height: height ?? this.height,

@@ -1,7 +1,8 @@
 import 'package:flow_compose/src/nodes/base_node.dart';
+import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
-class NodeWidget<T extends BaseNode> extends StatefulWidget {
+class NodeWidget<T extends INode> extends StatefulWidget {
   const NodeWidget(
       {super.key,
       required this.node,
@@ -23,15 +24,19 @@ class NodeWidget<T extends BaseNode> extends StatefulWidget {
   State<NodeWidget> createState() => _NodeWidgetState();
 }
 
-class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
+class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
   bool willAccept = false;
 
   @override
   Widget build(BuildContext context) {
-    late T node = widget.node as T;
-    late Offset offset = node.offset;
-    late double factor = widget.factor;
-    late Offset dragOffset = widget.dragOffset;
+    T node = widget.node as T;
+    Offset offset = node.offset;
+    double width = node.width;
+    double height = node.height;
+    String label = node.label;
+    String uuid = node.uuid;
+    double factor = widget.factor;
+    Offset dragOffset = widget.dragOffset;
 
     return Positioned(
       left: offset.dx * factor + dragOffset.dx,
@@ -51,17 +56,17 @@ class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
                     borderRadius: BorderRadius.circular(4),
                     color: Colors.white,
                   ),
-                  width: node.width * factor,
-                  height: node.height * factor,
+                  width: width * factor,
+                  height: height * factor,
                   alignment: Alignment.center,
-                  child: Text(node.label),
+                  child: Text(label),
                 )),
             Positioned(
                 right: 0,
                 top: 0,
                 child: GestureDetector(
                     onTap: () {
-                      debugPrint("delete ${node.uuid}");
+                      debugPrint("delete $uuid");
                     },
                     child: Container(
                       width: 24,
@@ -76,9 +81,9 @@ class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
                     ))),
             Positioned(
                 right: 0,
-                top: 0.5 * node.height * factor,
+                top: 0.5 * height * factor,
                 child: Draggable(
-                    data: node.uuid,
+                    data: uuid,
                     onDragUpdate: (details) {
                       // print(details);
                       widget.onNodeEdgeCreateOrModify(details.delta);
@@ -101,7 +106,7 @@ class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
                     ))),
             Positioned(
                 left: 0,
-                top: 0.5 * node.height * factor,
+                top: 0.5 * height * factor,
                 child: DragTarget<String>(
                   builder: (c, _, __) {
                     return Container(
@@ -117,7 +122,7 @@ class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
                     );
                   },
                   onWillAcceptWithDetails: (details) {
-                    if (details.data == node.uuid) {
+                    if (details.data == uuid) {
                       return false;
                     }
 
@@ -132,8 +137,8 @@ class _NodeWidgetState<T extends BaseNode> extends State<NodeWidget> {
                     });
                   },
                   onAcceptWithDetails: (data) {
-                    debugPrint("accept ${data.data} this is ${node.uuid}");
-                    widget.onEdgeAccept(data.data, node.uuid);
+                    debugPrint("accept ${data.data} this is $uuid");
+                    widget.onEdgeAccept(data.data, uuid);
                     setState(() {
                       willAccept = false;
                     });
