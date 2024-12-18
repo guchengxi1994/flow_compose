@@ -13,7 +13,7 @@ jobs:
       - name: Install flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: 3.24.5
+          flutter-version: 3.27.1
       
       - name: Bump build number
         run: |
@@ -26,7 +26,7 @@ jobs:
         run: |
           cd example/
           flutter pub get
-          flutter build web --release --base-href="/flow_compose/"  --web-renderer html
+          flutter build web --release --base-href="/flow_compose/" 
       
       - name: "Web Deploy 🚀"
         # https://github.com/JamesIves/github-pages-deploy-action
