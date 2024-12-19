@@ -4,4 +4,4 @@ Inspired by [flutter_flow_chart](https://github.com/alnitak/flutter_flow_chart),
 
 This is in a early stage, and not ready for use.
 
-![demo](./images/20241218-140929.gif)
+![demo](./images/20241219-134114.gif)

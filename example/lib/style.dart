@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+bool promptValidator(String inputKey, String prompt) {
+  return prompt.isEmpty || prompt.contains("{{$inputKey}}");
+}
+
+bool multiplePromptValidator(String prompt, List<String> inputKeys) {
+  return prompt.isEmpty ||
+      inputKeys.every((element) => prompt.contains("{{$element}}"));
+}
+
 const appColor = Color.fromARGB(255, 132, 142, 209);
 
 const InputDecoration inputDecoration = InputDecoration(
