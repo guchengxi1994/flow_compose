@@ -1,6 +1,9 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 
+import 'nodes/simple_qa_node.dart';
+import 'nodes/start_node.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -36,6 +39,18 @@ class _MyHomePageState extends State<MyHomePage> {
         BaseNode(
           label: "fake",
           uuid: "fake",
+          depth: -1,
+          offset: Offset.zero,
+        ),
+        StartNode(
+          label: "开始",
+          uuid: "",
+          depth: -1,
+          offset: Offset.zero,
+        ),
+        SimpleQaNode(
+          label: "Simple QA",
+          uuid: "",
           depth: -1,
           offset: Offset.zero,
         )

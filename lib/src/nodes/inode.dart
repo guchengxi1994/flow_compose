@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+typedef NodeBuilder = Widget Function(BuildContext context);
+
 abstract class INode {
   final double width;
   final double height;
@@ -10,6 +12,7 @@ abstract class INode {
   final List<INode> children;
   final String nodeName;
   final String description;
+  NodeBuilder? builder;
 
   Widget fakeWidget() {
     return Material(
@@ -33,7 +36,8 @@ abstract class INode {
       required this.offset,
       this.children = const [],
       this.nodeName = "base",
-      this.description = "Base node, just for testing purposes"});
+      this.description = "Base node, just for testing purposes",
+      this.builder});
 
   Offset get outputPoint => Offset(offset.dx + width, offset.dy + 0.5 * height);
 

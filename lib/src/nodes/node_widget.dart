@@ -61,7 +61,9 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                   width: width * factor,
                   height: height * factor,
                   alignment: Alignment.center,
-                  child: Text(label),
+                  child: node.builder == null
+                      ? Text(label)
+                      : node.builder!(context),
                 )),
             Positioned(
                 right: 0,
@@ -78,7 +80,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.delete,
+                        Icons.close,
                         color: Colors.red,
                       ),
                     ))),
@@ -105,7 +107,10 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.output),
+                      child: Icon(
+                        Icons.output,
+                        color: Colors.grey[300],
+                      ),
                     ))),
             Positioned(
                 left: 0,
@@ -120,7 +125,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       ),
                       child: Icon(
                         Icons.input,
-                        color: willAccept ? Colors.green : Colors.black,
+                        color: willAccept ? Colors.green : Colors.grey[300],
                       ),
                     );
                   },
