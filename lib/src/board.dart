@@ -1,5 +1,6 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
+import 'package:flow_compose/src/nodes/node_list_widget.dart';
 import 'package:flow_compose/src/nodes/nodes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -110,6 +111,29 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid = null;
   }
 
+  void _handleNodeDelete(String uuid) {
+    Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+    List<INode> nodes = boardNotifier.value.data;
+    nodes.removeWhere((element) => element.uuid == uuid);
+    edges.removeWhere(
+        (element) => element.source == uuid || element.target == uuid);
+    boardNotifier.value = boardNotifier.value.copyWith(
+      edges: edges.toSet(),
+      data: nodes,
+    );
+  }
+
+  @Features(features: [
+    FeaturesType.nodeDrag,
+    FeaturesType.boardDrag,
+    FeaturesType.boardScaleChange
+  ])
+  void _addNewNode(INode node) {
+    boardNotifier.value = boardNotifier.value.copyWith(
+      data: boardNotifier.value.data.toList()..add(node),
+    );
+  }
+
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
     var data = boardNotifier.value.data;
     data = data.map((e) {
@@ -144,63 +168,82 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        behavior: HitTestBehavior.deferToChild,
-        onPanUpdate: (details) {
-          _handleDragUpdate(details.delta);
-        },
-        child: Listener(
-            onPointerSignal: (pointerSignal) {
-              if (pointerSignal is PointerScrollEvent) {
-                _handleScaleUpdate(pointerSignal.scrollDelta.dy);
-              }
-            },
-            child: ValueListenableBuilder(
-              valueListenable: boardNotifier,
-              builder: (context, state, child) {
-                Widget child = Container();
-                if (state.data.isNotEmpty) {
-                  child = Stack(
-                    children: [
-                      Container(
-                        color: Colors.transparent,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                      ...state.data.map((e) {
-                        return NodeWidget<INode>(
-                          node: e,
-                          dragOffset: state.dragOffset,
-                          factor: state.scaleFactor,
-                          onNodeDrag: (offset) {
-                            _handleNodeDrag(
-                                e.getUuid(), offset, state.scaleFactor);
-                          },
-                          onNodeEdgeCreateOrModify: (offset) {
-                            _modifyFakeEdge(e, offset);
-                          },
-                          onNodeEdgeCancel: () {
-                            _handleNodeEdgeCancel();
-                          },
-                          onEdgeAccept: (from, to) {
-                            _paintEdgeFromAToB(from, to);
-                          },
-                        );
-                      })
-                    ],
+    return ValueListenableBuilder(
+      valueListenable: boardNotifier,
+      builder: (context, state, child) {
+        Widget child = DragTarget<INode>(
+          builder: (c, _, __) {
+            return Stack(
+              children: [
+                GestureDetector(
+                    behavior: HitTestBehavior.deferToChild,
+                    onPanUpdate: (details) {
+                      _handleDragUpdate(details.delta);
+                    },
+                    child: Listener(
+                        onPointerSignal: (pointerSignal) {
+                          if (pointerSignal is PointerScrollEvent) {
+                            _handleScaleUpdate(pointerSignal.scrollDelta.dy);
+                          }
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ))),
+                ...state.data.map((e) {
+                  return NodeWidget<INode>(
+                    node: e,
+                    dragOffset: state.dragOffset,
+                    factor: state.scaleFactor,
+                    onNodeDelete: (u) {
+                      _handleNodeDelete(u);
+                    },
+                    onNodeDrag: (offset) {
+                      _handleNodeDrag(e.getUuid(), offset, state.scaleFactor);
+                    },
+                    onNodeEdgeCreateOrModify: (offset) {
+                      _modifyFakeEdge(e, offset);
+                    },
+                    onNodeEdgeCancel: () {
+                      _handleNodeEdgeCancel();
+                    },
+                    onEdgeAccept: (from, to) {
+                      _paintEdgeFromAToB(from, to);
+                    },
                   );
-                }
+                }),
+                Positioned(
+                    left: 20,
+                    top: 20,
+                    child: NodeListWidget(
+                      nodes: widget.controller?.nodes ?? [],
+                    ))
+              ],
+            );
+          },
+          onAcceptWithDetails: (details) {
+            debugPrint(
+                "drag offset ${state.dragOffset}  accept details ${details.offset}  abslute ${details.offset - state.dragOffset}");
+            final node = details.data.copyWith(
+                uuid: uuid.v4(),
+                offset: (details.offset - state.dragOffset) *
+                    1 /
+                    state.scaleFactor);
+            _addNewNode(node);
+          },
+        );
 
-                return CustomPaint(
-                  painter: InfiniteCanvasPainter(
-                      offset: state.dragOffset,
-                      scale: state.scaleFactor,
-                      data: state.data,
-                      edges: state.edges),
-                  child: child,
-                );
-              },
-            )));
+        return CustomPaint(
+          painter: InfiniteCanvasPainter(
+              offset: state.dragOffset,
+              scale: state.scaleFactor,
+              data: state.data,
+              edges: state.edges),
+          child: child,
+        );
+      },
+    );
   }
 }
 

@@ -1,4 +1,6 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
+
+typedef NodeBuilder = Widget Function(BuildContext context);
 
 abstract class INode {
   final double width;
@@ -8,16 +10,34 @@ abstract class INode {
   final int depth;
   final Offset offset;
   final List<INode> children;
+  final String nodeName;
+  final String description;
+  NodeBuilder? builder;
 
-  INode({
-    this.width = 300,
-    this.height = 400,
-    required this.label,
-    required this.uuid,
-    required this.depth,
-    required this.offset,
-    this.children = const [],
-  });
+  Widget fakeWidget() {
+    return Material(
+      elevation: 10,
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Center(
+          child: Text(label),
+        ),
+      ),
+    );
+  }
+
+  INode(
+      {this.width = 300,
+      this.height = 400,
+      required this.label,
+      required this.uuid,
+      required this.depth,
+      required this.offset,
+      this.children = const [],
+      this.nodeName = "base",
+      this.description = "Base node, just for testing purposes",
+      this.builder});
 
   Offset get outputPoint => Offset(offset.dx + width, offset.dy + 0.5 * height);
 

@@ -11,7 +11,8 @@ class NodeWidget<T extends INode> extends StatefulWidget {
       required this.onNodeDrag,
       required this.onNodeEdgeCreateOrModify,
       required this.onNodeEdgeCancel,
-      required this.onEdgeAccept});
+      required this.onEdgeAccept,
+      required this.onNodeDelete});
   final T node;
   final Offset dragOffset;
   final double factor;
@@ -19,6 +20,7 @@ class NodeWidget<T extends INode> extends StatefulWidget {
   final OnNodeEdgeCreateOrModify onNodeEdgeCreateOrModify;
   final VoidCallback onNodeEdgeCancel;
   final OnEdgeAccept onEdgeAccept;
+  final OnNodeDelete onNodeDelete;
 
   @override
   State<NodeWidget> createState() => _NodeWidgetState();
@@ -59,14 +61,17 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                   width: width * factor,
                   height: height * factor,
                   alignment: Alignment.center,
-                  child: Text(label),
+                  child: node.builder == null
+                      ? Text(label)
+                      : node.builder!(context),
                 )),
             Positioned(
                 right: 0,
                 top: 0,
-                child: GestureDetector(
+                child: InkWell(
                     onTap: () {
                       debugPrint("delete $uuid");
+                      widget.onNodeDelete(uuid);
                     },
                     child: Container(
                       width: 24,
@@ -75,7 +80,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.delete,
+                        Icons.close,
                         color: Colors.red,
                       ),
                     ))),
@@ -102,7 +107,10 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(Icons.output),
+                      child: Icon(
+                        Icons.output,
+                        color: Colors.grey[300],
+                      ),
                     ))),
             Positioned(
                 left: 0,
@@ -117,7 +125,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       ),
                       child: Icon(
                         Icons.input,
-                        color: willAccept ? Colors.green : Colors.black,
+                        color: willAccept ? Colors.green : Colors.grey[300],
                       ),
                     );
                   },

@@ -7,6 +7,8 @@ typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
 
 typedef OnEdgeAccept = void Function(String from, String to);
 
+typedef OnNodeDelete = void Function(String uuid);
+
 class BaseNode extends INode {
   BaseNode(
       {required super.label,
@@ -15,7 +17,9 @@ class BaseNode extends INode {
       required super.offset,
       super.width,
       super.height,
-      super.children});
+      super.children,
+      super.nodeName,
+      super.description});
 
   @override
   String toString() {
@@ -25,16 +29,16 @@ class BaseNode extends INode {
   static List<BaseNode> fake() {
     return [
       BaseNode(
-          width: 300,
-          height: 400,
+          width: 150,
+          height: 150,
           label: "1-1",
           uuid: "1-1",
           depth: 1,
-          offset: Offset(0, 0),
+          offset: Offset(200, 200),
           children: []),
       BaseNode(
-          width: 300,
-          height: 400,
+          width: 150,
+          height: 150,
           label: "2-2",
           uuid: "2-2",
           depth: 1,
