@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 
 const double gap = 5;
 
+double sigmoid(double x) {
+  return 1 / (1 + exp(-x));
+}
+
 void dynamicEdgePaint(
     Canvas canvas, double scale, Offset start, Offset end, /*偏移*/ Offset offset,
     {bool withArrow = true}) {
@@ -32,27 +36,26 @@ void dynamicEdgePaint(
     path.lineTo(e.dx, e.dy);
   } else {
     var subE = Offset(e.dx - gap * 3, e.dy);
+    double distance = 50;
 
-    var distance = 0.0;
-    distance = (subE - s).distance / 3;
-    final p1 = Offset(s.dx - distance, s.dy - distance);
+    distance = e.dy * sigmoid((s.dy - subE.dy).abs());
 
     // 计算控制点位置（动态生成控制点）
     if (s.dy < e.dy) {
       controlPoint = Offset(
         (s.dx + e.dx) * 0.5, // 控制点 x 为起点和终点的中点
-        e.dy + 50, // 控制点 y 位于两点之上，使曲线弯曲
+        (e.dy + distance) / 2, // 控制点 y 位于两点之上，使曲线弯曲
       );
     } else {
       controlPoint = Offset(
         (s.dx + e.dx) * 0.5,
-        s.dy - 50,
+        (e.dy + distance) / 2,
       );
     }
 
     path.conicTo(controlPoint.dx, controlPoint.dy, subE.dx, subE.dy, 1);
 
-    path.lineTo(e.dx, e.dy);
+    path.lineTo(e.dx - gap, e.dy);
   }
 
   canvas.drawPath(path, paint);
