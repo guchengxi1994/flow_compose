@@ -12,7 +12,8 @@ class StartNode extends INode {
       super.height = 50,
       super.children,
       super.nodeName = "开始",
-      super.description = "启动节点，用于流程的开始"});
+      super.description = "启动节点，用于流程的开始",
+      super.builderName = "StartNode"});
 
   @override
   INode copyWith(

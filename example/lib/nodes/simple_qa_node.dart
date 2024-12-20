@@ -8,7 +8,7 @@ import 'show_node_config_dialog.dart';
 
 class SimpleQAConfigWidget extends StatefulWidget {
   const SimpleQAConfigWidget({super.key, this.data});
-  final Map<String, Object>? data;
+  final Map<String, dynamic>? data;
 
   @override
   State<SimpleQAConfigWidget> createState() => _SimpleQAConfigWidgetState();
@@ -85,9 +85,9 @@ class SimpleQAWidget extends StatefulWidget {
 }
 
 class _SimpleQAWidgetState extends State<SimpleQAWidget> {
-  String input = "";
-  String output = "";
-  String prompt = "";
+  late String input = widget.node.data?["input"] as String? ?? "";
+  late String output = widget.node.data?["output"] as String? ?? "";
+  late String prompt = widget.node.data?["prompt"] as String? ?? "";
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +106,12 @@ class _SimpleQAWidgetState extends State<SimpleQAWidget> {
               output = v["output"]?.toString() ?? "";
               prompt = v["prompt"]?.toString() ?? "";
             });
+
+            widget.node.data = {
+              "input": input,
+              "output": output,
+              "prompt": prompt,
+            };
           }
         });
       },
@@ -203,10 +209,11 @@ class SimpleQaNode extends INode {
     required super.offset,
     super.children,
     super.height = 200,
-    super.width = 300,
+    super.width = 200,
     super.nodeName = "单输入输出问答节点",
     super.description = "仅支持一个输入和一个输出的节点",
     super.builder,
+    super.builderName = "SimpleQaNode",
   }) {
     builder = (context) => SimpleQAWidget(
           node: this,

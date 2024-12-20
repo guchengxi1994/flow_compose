@@ -1,4 +1,4 @@
-import 'package:flow_compose/src/nodes/base_node.dart';
+import 'package:flow_compose/src/nodes/edge.dart';
 import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
