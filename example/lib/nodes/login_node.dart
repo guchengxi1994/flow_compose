@@ -89,7 +89,8 @@ class LoginNode extends INode {
       super.height = 100,
       super.width = 200,
       super.nodeName = "登录节点",
-      super.builderName = "LoginNode"}) {
+      super.builderName = "LoginNode",
+      super.data}) {
     builder = (context) => GestureDetector(
           onDoubleTap: () async {
             await showNodeConfigDialog(context, this, data: data).then((v) {
@@ -110,6 +111,33 @@ class LoginNode extends INode {
                 child: Text("登录信息"),
               )),
         );
+  }
+
+  factory LoginNode.fromJson(Map<String, dynamic> json) {
+    String uuid = json["uuid"] ?? "";
+    String label = json["label"] ?? "";
+    int depth = json["depth"] ?? 0;
+    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
+    double width = json["width"] ?? 300;
+    double height = json["height"] ?? 400;
+    String nodeName = json["nodeName"] ?? "base";
+    String description =
+        json["description"] ?? "Base node, just for testing purposes";
+    String builderName = json["builderName"] ?? "base";
+    Map<String, dynamic>? data = json["data"];
+
+    return LoginNode(
+      offset: offset,
+      width: width,
+      height: height,
+      nodeName: nodeName,
+      description: description,
+      builderName: builderName,
+      label: label,
+      uuid: uuid,
+      depth: depth,
+      data: data,
+    );
   }
 
   @override

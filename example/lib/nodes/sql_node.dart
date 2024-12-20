@@ -149,8 +149,37 @@ class SqlNode extends INode {
       super.height = 150,
       super.width = 300,
       super.nodeName = "SQL节点",
-      super.builderName = "SqlNode"}) {
+      super.builderName = "SqlNode",
+      super.data,
+      super.builder}) {
     builder = (c) => SqlNodeWidget(node: this);
+  }
+
+  factory SqlNode.fromJson(Map<String, dynamic> json) {
+    String uuid = json["uuid"] ?? "";
+    String label = json["label"] ?? "";
+    int depth = json["depth"] ?? 0;
+    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
+    double width = json["width"] ?? 300;
+    double height = json["height"] ?? 400;
+    String nodeName = json["nodeName"] ?? "base";
+    String description =
+        json["description"] ?? "Base node, just for testing purposes";
+    String builderName = json["builderName"] ?? "base";
+    Map<String, dynamic>? data = json["data"];
+
+    return SqlNode(
+      offset: offset,
+      width: width,
+      height: height,
+      nodeName: nodeName,
+      description: description,
+      builderName: builderName,
+      label: label,
+      uuid: uuid,
+      depth: depth,
+      data: data,
+    );
   }
 
   @override

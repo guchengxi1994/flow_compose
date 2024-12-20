@@ -202,22 +202,49 @@ class _SimpleQAWidgetState extends State<SimpleQAWidget> {
 }
 
 class SimpleQaNode extends INode {
-  SimpleQaNode({
-    required super.label,
-    required super.uuid,
-    required super.depth,
-    required super.offset,
-    super.children,
-    super.height = 200,
-    super.width = 200,
-    super.nodeName = "单输入输出问答节点",
-    super.description = "仅支持一个输入和一个输出的节点",
-    super.builder,
-    super.builderName = "SimpleQaNode",
-  }) {
+  SimpleQaNode(
+      {required super.label,
+      required super.uuid,
+      required super.depth,
+      required super.offset,
+      super.children,
+      super.height = 200,
+      super.width = 200,
+      super.nodeName = "单输入输出问答节点",
+      super.description = "仅支持一个输入和一个输出的节点",
+      super.builder,
+      super.builderName = "SimpleQaNode",
+      super.data}) {
     builder = (context) => SimpleQAWidget(
           node: this,
         );
+  }
+
+  factory SimpleQaNode.fromJson(Map<String, dynamic> json) {
+    String uuid = json["uuid"] ?? "";
+    String label = json["label"] ?? "";
+    int depth = json["depth"] ?? 0;
+    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
+    double width = json["width"] ?? 300;
+    double height = json["height"] ?? 400;
+    String nodeName = json["nodeName"] ?? "base";
+    String description =
+        json["description"] ?? "Base node, just for testing purposes";
+    String builderName = json["builderName"] ?? "base";
+    Map<String, dynamic>? data = json["data"];
+
+    return SimpleQaNode(
+      offset: offset,
+      width: width,
+      height: height,
+      nodeName: nodeName,
+      description: description,
+      builderName: builderName,
+      label: label,
+      uuid: uuid,
+      depth: depth,
+      data: data,
+    );
   }
 
   @override

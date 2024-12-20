@@ -46,6 +46,7 @@ class BoardController {
     """;
   }
 
+  @Deprecated("has some bug, use `reCreate` instead")
   void loadFromString(String json) {
     Map<String, dynamic> data = jsonDecode(json);
     List<INode> nodes = [];
@@ -57,6 +58,10 @@ class BoardController {
       edges.add(Edge.fromJson(edge));
     }
 
+    state.value = BoardState(data: nodes, edges: edges.toSet());
+  }
+
+  void reCreate(List<INode> nodes, List<Edge> edges) {
     state.value = BoardState(data: nodes, edges: edges.toSet());
   }
 }

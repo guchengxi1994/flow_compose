@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:example/nodes/sql_node.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
@@ -112,8 +114,28 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   }).then((_) {
                 if (textController.text.isNotEmpty) {
-                  controller.loadFromString(textController.text);
-                  setState(() {});
+                  Map<String, dynamic> data = jsonDecode(textController.text);
+                  List<INode> nodes = [];
+                  List<Edge> edges = [];
+                  for (var node in data["nodes"]) {
+                    // nodes.add(INode.fromJson(node));
+                    if (node['builderName'] == "StartNode") {
+                      nodes.add(StartNode.fromJson(node));
+                    } else if (node['builderName'] == "SqlNode") {
+                      nodes.add(SqlNode.fromJson(node));
+                    } else if (node['builderName'] == "SimpleQaNode") {
+                      nodes.add(SimpleQaNode.fromJson(node));
+                    } else if (node['builderName'] == "LoginNode") {
+                      nodes.add(LoginNode.fromJson(node));
+                    } else {
+                      nodes.add(INode.fromJson(node));
+                    }
+                  }
+                  for (var edge in data["edges"]) {
+                    edges.add(Edge.fromJson(edge));
+                  }
+
+                  controller.reCreate(nodes, edges);
                 }
               });
             },

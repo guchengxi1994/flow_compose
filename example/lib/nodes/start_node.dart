@@ -15,6 +15,31 @@ class StartNode extends INode {
       super.description = "启动节点，用于流程的开始",
       super.builderName = "StartNode"});
 
+  factory StartNode.fromJson(Map<String, dynamic> json) {
+    String uuid = json["uuid"] ?? "";
+    String label = json["label"] ?? "";
+    int depth = json["depth"] ?? 0;
+    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
+    double width = json["width"] ?? 300;
+    double height = json["height"] ?? 400;
+    String nodeName = json["nodeName"] ?? "base";
+    String description =
+        json["description"] ?? "Base node, just for testing purposes";
+    String builderName = json["builderName"] ?? "base";
+    // Map<String, dynamic>? data = json["data"];
+
+    return StartNode(
+        offset: offset,
+        width: width,
+        height: height,
+        nodeName: nodeName,
+        description: description,
+        builderName: builderName,
+        label: label,
+        uuid: uuid,
+        depth: depth);
+  }
+
   @override
   INode copyWith(
       {double? width,
