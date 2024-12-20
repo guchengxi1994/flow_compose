@@ -298,7 +298,7 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
 
     if (edges.isNotEmpty) {
       for (Edge e in edges as Set<Edge>) {
-        paintBezierEdgeWithArrow(canvas, scale, e.start, e.end, offset);
+        dynamicEdgePaint(canvas, scale, e.start, e.end, offset);
       }
     }
   }
