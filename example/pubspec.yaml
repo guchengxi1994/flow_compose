@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   flow_compose:
     path: ../
+  sqlparser: ^0.40.0
+  flutter_expandable_fab: ^2.3.0
+  flutter_json_view: ^1.1.5
 
 dev_dependencies:
   flutter_test:

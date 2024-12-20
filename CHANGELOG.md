@@ -1,3 +1,8 @@
+## 0.0.1+4
+
+* make `INode` not abstract.
+* add `toJson` and `fromJson`
+
 ## 0.0.1+3
 
 * add some example, fix errors.

@@ -56,7 +56,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
           target: bNode.getUuid(),
           start: aNode.outputPoint,
           end: bNode.inputPoint);
-      Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+      Set<Edge> edges = boardNotifier.value.edges;
       edges.add(edge);
       boardNotifier.value = boardNotifier.value.copyWith(edges: edges.toSet());
     }
@@ -71,7 +71,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid ??= uuid.v4();
     // print("start.outputPoint ${start.outputPoint}");
 
-    Edge? fakeEdge = (boardNotifier.value.edges as Set<Edge>)
+    Edge? fakeEdge = (boardNotifier.value.edges)
         .where(
           (element) => element.uuid == currentUuid,
         )
@@ -80,7 +80,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       fakeEdge = fakeEdge.copyWith(
           end: fakeEdge.end + offset * 1 / boardNotifier.value.scaleFactor);
       boardNotifier.value = boardNotifier.value.copyWith(
-        edges: (boardNotifier.value.edges as Set<Edge>).map((e) {
+        edges: (boardNotifier.value.edges).map((e) {
           if (e.uuid == fakeEdge!.uuid) {
             return fakeEdge;
           }
@@ -94,7 +94,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         uuid: currentUuid!,
         start: start.outputPoint,
       );
-      Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+      Set<Edge> edges = boardNotifier.value.edges;
       edges.add(fakeEdge);
       boardNotifier.value = boardNotifier.value.copyWith(
         edges: edges.toSet(),
@@ -103,7 +103,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _handleNodeEdgeCancel() {
-    Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+    Set<Edge> edges = boardNotifier.value.edges;
     edges.removeWhere((element) => element.uuid == currentUuid);
     boardNotifier.value = boardNotifier.value.copyWith(
       edges: edges.toSet(),
@@ -112,7 +112,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   void _handleNodeDelete(String uuid) {
-    Set<Edge> edges = boardNotifier.value.edges as Set<Edge>;
+    Set<Edge> edges = boardNotifier.value.edges;
     List<INode> nodes = boardNotifier.value.data;
     nodes.removeWhere((element) => element.uuid == uuid);
     edges.removeWhere(
@@ -143,7 +143,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       return e;
     }).toList();
 
-    var edges = boardNotifier.value.edges as Set<Edge>;
+    var edges = boardNotifier.value.edges;
     if (edges.isNotEmpty) {
       edges = edges.map((e) {
         if (e.source == uuid) {

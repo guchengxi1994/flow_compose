@@ -1,0 +1,172 @@
+{
+    "nodes": [
+        {
+            "uuid": "4fc79067-9377-44c9-b111-10e20f49543a",
+            "label": "开始",
+            "depth": -1,
+            "offset": {
+                "dx": 409.0,
+                "dy": 207.0
+            },
+            "width": 100.0,
+            "height": 50.0,
+            "nodeName": "开始",
+            "description": "启动节点，用于流程的开始",
+            "builderName": "StartNode",
+            "data": {}
+        },
+        {
+            "uuid": "df086b43-d422-4010-9777-5d81cdd7a656",
+            "label": "Login",
+            "depth": -1,
+            "offset": {
+                "dx": 659.0,
+                "dy": 111.0
+            },
+            "width": 200.0,
+            "height": 100.0,
+            "nodeName": "登录节点",
+            "description": "登录节点，获取登录身份校验信息",
+            "builderName": "LoginNode",
+            "data": {}
+        },
+        {
+            "uuid": "a5cc0441-a455-431f-8270-6e15630eb995",
+            "label": "Simple QA",
+            "depth": -1,
+            "offset": {
+                "dx": 663.0,
+                "dy": 270.0
+            },
+            "width": 200.0,
+            "height": 200.0,
+            "nodeName": "单输入输出问答节点",
+            "description": "仅支持一个输入和一个输出的节点",
+            "builderName": "SimpleQaNode",
+            "data": {
+                "input": "1",
+                "output": "2",
+                "prompt": "333"
+            }
+        },
+        {
+            "uuid": "353bbc08-d234-4fce-b2b9-f6463e8ca0be",
+            "label": "SQL Node",
+            "depth": -1,
+            "offset": {
+                "dx": 657.6923076923053,
+                "dy": 559.2307692307689
+            },
+            "width": 300.0,
+            "height": 150.0,
+            "nodeName": "SQL节点",
+            "description": "SQL节点执行SQL语句",
+            "builderName": "SqlNode",
+            "data": {
+                "sql": "select user from user_table",
+                "params": [
+                    "user"
+                ]
+            }
+        },
+        {
+            "uuid": "5bd51769-6d28-450f-91e4-f6da435a8d48",
+            "label": "Simple QA",
+            "depth": -1,
+            "offset": {
+                "dx": 1184.6153846153848,
+                "dy": 256.92307692307696
+            },
+            "width": 200.0,
+            "height": 200.0,
+            "nodeName": "单输入输出问答节点",
+            "description": "仅支持一个输入和一个输出的节点",
+            "builderName": "SimpleQaNode",
+            "data": {
+                "input": "2",
+                "output": "3",
+                "prompt": "4444"
+            }
+        }
+    ],
+    "edges": [
+        {
+            "uuid": "0153d932-a02a-4b42-8247-5131d2c3d474",
+            "source": "4fc79067-9377-44c9-b111-10e20f49543a",
+            "target": "df086b43-d422-4010-9777-5d81cdd7a656",
+            "start": {
+                "dx": 509.0,
+                "dy": 232.0
+            },
+            "end": {
+                "dx": 659.0,
+                "dy": 161.0
+            }
+        },
+        {
+            "uuid": "b21be71f-79a5-4de9-9e5e-eb2908129982",
+            "source": "4fc79067-9377-44c9-b111-10e20f49543a",
+            "target": "a5cc0441-a455-431f-8270-6e15630eb995",
+            "start": {
+                "dx": 509.0,
+                "dy": 232.0
+            },
+            "end": {
+                "dx": 663.0,
+                "dy": 370.0
+            }
+        },
+        {
+            "uuid": "0a3b2a00-2df7-4be3-a0da-5f72cad98427",
+            "source": "4fc79067-9377-44c9-b111-10e20f49543a",
+            "target": "353bbc08-d234-4fce-b2b9-f6463e8ca0be",
+            "start": {
+                "dx": 509.0,
+                "dy": 232.0
+            },
+            "end": {
+                "dx": 657.6923076923053,
+                "dy": 634.2307692307689
+            }
+        },
+        {
+            "uuid": "79cd1d18-371e-4326-b870-8f00f7477d3a",
+            "source": "353bbc08-d234-4fce-b2b9-f6463e8ca0be",
+            "target": "5bd51769-6d28-450f-91e4-f6da435a8d48",
+            "start": {
+                "dx": 957.6923076923053,
+                "dy": 634.2307692307689
+            },
+            "end": {
+                "dx": 1184.6153846153848,
+                "dy": 356.92307692307696
+            }
+        },
+        {
+            "uuid": "de37f387-5059-4e5c-9747-a247f0147dbf",
+            "source": "a5cc0441-a455-431f-8270-6e15630eb995",
+            "target": "5bd51769-6d28-450f-91e4-f6da435a8d48",
+            "start": {
+                "dx": 863.0,
+                "dy": 370.0
+            },
+            "end": {
+                "dx": 1184.6153846153848,
+                "dy": 356.92307692307696
+            }
+        },
+        {
+            "uuid": "4890d508-0ed6-4268-97dd-e641f4762df1",
+            "source": "df086b43-d422-4010-9777-5d81cdd7a656",
+            "target": "5bd51769-6d28-450f-91e4-f6da435a8d48",
+            "start": {
+                "dx": 859.0,
+                "dy": 161.0
+            },
+            "end": {
+                "dx": 1184.6153846153848,
+                "dy": 356.92307692307696
+            }
+        }
+    ]
+}

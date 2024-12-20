@@ -1,11 +1,12 @@
+import 'package:flow_compose/src/nodes/edge.dart';
 import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
-class BoardState<E> {
+class BoardState {
   final double scaleFactor;
   final Offset dragOffset;
   final List<INode> data;
-  final Set<E> edges;
+  final Set<Edge> edges;
 
   BoardState({
     this.scaleFactor = 1.0,
@@ -18,7 +19,7 @@ class BoardState<E> {
     double? scaleFactor,
     Offset? dragOffset,
     List<INode>? data,
-    Set<E>? edges,
+    Set<Edge>? edges,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,
