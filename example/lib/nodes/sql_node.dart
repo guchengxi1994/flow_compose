@@ -1,3 +1,4 @@
+import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
@@ -100,42 +101,44 @@ class _SqlNodeWidgetState extends State<SqlNodeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onDoubleTap: () {
-        showNodeConfigDialog(context, widget.node, data: data).then((v) {
-          debugPrint("sql $v");
-          if (v != null) {
-            setState(() {
-              // widget.node.data = v;
-              data = v;
+    return HammerAnimation(
+        uuid: widget.node.uuid,
+        child: GestureDetector(
+          onDoubleTap: () {
+            showNodeConfigDialog(context, widget.node, data: data).then((v) {
+              debugPrint("sql $v");
+              if (v != null) {
+                setState(() {
+                  // widget.node.data = v;
+                  data = v;
+                });
+                widget.node.data = data;
+              }
             });
-            widget.node.data = data;
-          }
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(25),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.white,
-        ),
-        width: widget.node.width,
-        height: widget.node.height,
-        child: Column(
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("params"),
-            Expanded(
-                child: Wrap(
-              children: (data['params'] as List)
-                  .map((v) => Chip(label: Text(v.toString())))
-                  .toList(),
-            ))
-          ],
-        ),
-      ),
-    );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: Colors.white,
+            ),
+            width: widget.node.width,
+            height: widget.node.height,
+            child: Column(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("params"),
+                Expanded(
+                    child: Wrap(
+                  children: (data['params'] as List)
+                      .map((v) => Chip(label: Text(v.toString())))
+                      .toList(),
+                ))
+              ],
+            ),
+          ),
+        ));
   }
 }
 

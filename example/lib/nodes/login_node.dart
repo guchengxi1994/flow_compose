@@ -1,3 +1,4 @@
+import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
@@ -90,25 +91,8 @@ class LoginNode extends INode {
       super.nodeName = "登录节点",
       super.builderName = "LoginNode",
       super.data}) {
-    builder = (context) => GestureDetector(
-          onDoubleTap: () async {
-            await showNodeConfigDialog(context, this, data: data).then((v) {
-              if (v != null) {
-                data = v;
-              }
-            });
-          },
-          child: Container(
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: Colors.white,
-              ),
-              width: width,
-              height: height,
-              child: Center(
-                child: Text("登录信息"),
-              )),
+    builder = (context) => LoginNodeWidget(
+          node: this,
         );
   }
 
@@ -154,5 +138,37 @@ class LoginNode extends INode {
         uuid: uuid ?? this.uuid,
         offset: offset ?? this.offset,
         children: children ?? this.children);
+  }
+}
+
+class LoginNodeWidget extends StatelessWidget {
+  const LoginNodeWidget({super.key, required this.node});
+  final INode node;
+
+  @override
+  Widget build(BuildContext context) {
+    return HammerAnimation(
+        uuid: node.uuid,
+        child: GestureDetector(
+          onDoubleTap: () async {
+            await showNodeConfigDialog(context, node, data: node.data)
+                .then((v) {
+              if (v != null) {
+                node.data = v;
+              }
+            });
+          },
+          child: Container(
+              padding: const EdgeInsets.all(25),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.white,
+              ),
+              width: node.width,
+              height: node.height,
+              child: Center(
+                child: Text("登录信息"),
+              )),
+        ));
   }
 }

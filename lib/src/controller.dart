@@ -21,6 +21,10 @@ class BoardController {
     state.value = newValue;
   }
 
+  void clear() {
+    state.value = BoardState();
+  }
+
   void reCenter() {
     state.value = state.value.copyWith(
       dragOffset: Offset.zero,
