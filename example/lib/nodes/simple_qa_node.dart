@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
@@ -91,113 +92,115 @@ class _SimpleQAWidgetState extends State<SimpleQAWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onDoubleTap: () async {
-        debugPrint("double tap");
-        await showNodeConfigDialog(context, widget.node, data: {
-          "input": input,
-          "output": output,
-          "prompt": prompt,
-        }).then((v) {
-          // print(v);
-          if (v != null) {
-            setState(() {
-              input = v["input"]?.toString() ?? "";
-              output = v["output"]?.toString() ?? "";
-              prompt = v["prompt"]?.toString() ?? "";
-            });
-
-            widget.node.data = {
+    return HammerAnimation(
+        uuid: widget.node.uuid,
+        child: GestureDetector(
+          onDoubleTap: () async {
+            debugPrint("double tap");
+            await showNodeConfigDialog(context, widget.node, data: {
               "input": input,
               "output": output,
               "prompt": prompt,
-            };
-          }
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.all(25),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: Colors.white,
-        ),
-        width: widget.node.width,
-        height: widget.node.height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 10,
-          children: [
-            SizedBox(
-              height: 30,
-              child: Row(
-                spacing: 10,
-                children: [
-                  Text("输入: "),
-                  if (input.isNotEmpty)
-                    Container(
-                      color: Colors.lightBlue,
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        input,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                ],
-              ),
+            }).then((v) {
+              // print(v);
+              if (v != null) {
+                setState(() {
+                  input = v["input"]?.toString() ?? "";
+                  output = v["output"]?.toString() ?? "";
+                  prompt = v["prompt"]?.toString() ?? "";
+                });
+
+                widget.node.data = {
+                  "input": input,
+                  "output": output,
+                  "prompt": prompt,
+                };
+              }
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.all(25),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: Colors.white,
             ),
-            SizedBox(
-              height: 30,
-              child: Row(
-                spacing: 10,
-                children: [
-                  Text("输出: "),
-                  if (output.isNotEmpty)
-                    Container(
-                      color: Colors.lightBlue,
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        output,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    )
-                ],
-              ),
+            width: widget.node.width,
+            height: widget.node.height,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 10,
+              children: [
+                SizedBox(
+                  height: 30,
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Text("输入: "),
+                      if (input.isNotEmpty)
+                        Container(
+                          color: Colors.lightBlue,
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            input,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Text("输出: "),
+                      if (output.isNotEmpty)
+                        Container(
+                          color: Colors.lightBlue,
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            output,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  child: Row(
+                    spacing: 10,
+                    children: [
+                      Text("prompt: "),
+                      if (prompt.isNotEmpty)
+                        Container(
+                          color: Colors.lightBlue,
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            "${prompt.substring(0, min(4, prompt.length))}...",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      if (prompt.isNotEmpty && input.isNotEmpty)
+                        promptValidator(input, prompt)
+                            ? Icon(
+                                Icons.check,
+                                color: Colors.green,
+                              )
+                            : Tooltip(
+                                message: "prompt 中没有包含输入变量",
+                                child: Icon(
+                                  Icons.close,
+                                  color: Colors.red,
+                                ),
+                              )
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 30,
-              child: Row(
-                spacing: 10,
-                children: [
-                  Text("prompt: "),
-                  if (prompt.isNotEmpty)
-                    Container(
-                      color: Colors.lightBlue,
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        "${prompt.substring(0, min(4, prompt.length))}...",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  if (prompt.isNotEmpty && input.isNotEmpty)
-                    promptValidator(input, prompt)
-                        ? Icon(
-                            Icons.check,
-                            color: Colors.green,
-                          )
-                        : Tooltip(
-                            message: "prompt 中没有包含输入变量",
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.red,
-                            ),
-                          )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 
@@ -205,11 +208,10 @@ class SimpleQaNode extends INode {
   SimpleQaNode(
       {required super.label,
       required super.uuid,
-      required super.depth,
       required super.offset,
       super.children,
       super.height = 200,
-      super.width = 200,
+      super.width = 300,
       super.nodeName = "单输入输出问答节点",
       super.description = "仅支持一个输入和一个输出的节点",
       super.builder,
@@ -223,7 +225,6 @@ class SimpleQaNode extends INode {
   factory SimpleQaNode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -242,7 +243,6 @@ class SimpleQaNode extends INode {
       builderName: builderName,
       label: label,
       uuid: uuid,
-      depth: depth,
       data: data,
     );
   }
@@ -262,7 +262,6 @@ class SimpleQaNode extends INode {
         height: height ?? this.height,
         label: label ?? this.label,
         uuid: uuid ?? this.uuid,
-        depth: depth ?? this.depth,
         offset: offset ?? this.offset,
         children: children ?? this.children);
   }

@@ -21,6 +21,10 @@ class BoardController {
     state.value = newValue;
   }
 
+  void clear() {
+    state.value = BoardState();
+  }
+
   void reCenter() {
     state.value = state.value.copyWith(
       dragOffset: Offset.zero,
@@ -29,6 +33,51 @@ class BoardController {
 
   void dispose() {
     state.dispose();
+  }
+
+  List<List<String>> getPath(INode node) {
+    Map<String, List<String>> m = _buildReverseMap();
+    return _findPathsToRoot(node.uuid, m);
+  }
+
+  Map<String, List<String>> _buildReverseMap() {
+    final edges = state.value.edges;
+    final reverseMap = <String, List<String>>{};
+    for (var edge in edges) {
+      if (edge.target != null) {
+        reverseMap.putIfAbsent(edge.target!, () => []).add(edge.source);
+      }
+    }
+    return reverseMap;
+  }
+
+  List<List<String>> _findPathsToRoot(
+    String targetUuid,
+    Map<String, List<String>> reverseMap,
+  ) {
+    // 如果节点没有父节点，说明它是根节点
+    if (!reverseMap.containsKey(targetUuid)) {
+      return [
+        [targetUuid]
+      ];
+    }
+
+    final paths = <List<String>>[];
+    for (var parent in reverseMap[targetUuid]!) {
+      // 递归获取父节点到根节点的所有路径
+      final parentPaths = _findPathsToRoot(parent, reverseMap);
+      for (var path in parentPaths) {
+        paths.add([...path, targetUuid]);
+      }
+    }
+    return paths;
+  }
+
+  setCurrentFocus(INode? node) {
+    if (node == value.focus) {
+      return;
+    }
+    state.value = state.value.copyWith(focus: node);
   }
 
   String dumpToString() {
@@ -46,7 +95,8 @@ class BoardController {
     """;
   }
 
-  @Deprecated("has some bug, use `reCreate` instead")
+  @Deprecated(
+      "has some bug, use `reCreate` instead, will be removed in the future")
   void loadFromString(String json) {
     Map<String, dynamic> data = jsonDecode(json);
     List<INode> nodes = [];

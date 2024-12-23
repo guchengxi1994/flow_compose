@@ -1,3 +1,4 @@
+import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +83,6 @@ class LoginNode extends INode {
   LoginNode(
       {required super.label,
       required super.uuid,
-      required super.depth,
       required super.offset,
       super.children,
       super.description = "登录节点，获取登录身份校验信息",
@@ -91,32 +91,14 @@ class LoginNode extends INode {
       super.nodeName = "登录节点",
       super.builderName = "LoginNode",
       super.data}) {
-    builder = (context) => GestureDetector(
-          onDoubleTap: () async {
-            await showNodeConfigDialog(context, this, data: data).then((v) {
-              if (v != null) {
-                data = v;
-              }
-            });
-          },
-          child: Container(
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: Colors.white,
-              ),
-              width: width,
-              height: height,
-              child: Center(
-                child: Text("登录信息"),
-              )),
+    builder = (context) => LoginNodeWidget(
+          node: this,
         );
   }
 
   factory LoginNode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -135,7 +117,6 @@ class LoginNode extends INode {
       builderName: builderName,
       label: label,
       uuid: uuid,
-      depth: depth,
       data: data,
     );
   }
@@ -155,8 +136,39 @@ class LoginNode extends INode {
         height: height ?? this.height,
         label: label ?? this.label,
         uuid: uuid ?? this.uuid,
-        depth: depth ?? this.depth,
         offset: offset ?? this.offset,
         children: children ?? this.children);
+  }
+}
+
+class LoginNodeWidget extends StatelessWidget {
+  const LoginNodeWidget({super.key, required this.node});
+  final INode node;
+
+  @override
+  Widget build(BuildContext context) {
+    return HammerAnimation(
+        uuid: node.uuid,
+        child: GestureDetector(
+          onDoubleTap: () async {
+            await showNodeConfigDialog(context, node, data: node.data)
+                .then((v) {
+              if (v != null) {
+                node.data = v;
+              }
+            });
+          },
+          child: Container(
+              padding: const EdgeInsets.all(25),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: Colors.white,
+              ),
+              width: node.width,
+              height: node.height,
+              child: Center(
+                child: Text("登录信息"),
+              )),
+        ));
   }
 }

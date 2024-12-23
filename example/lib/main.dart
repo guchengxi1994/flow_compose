@@ -2,17 +2,23 @@ import 'dart:convert';
 
 import 'package:example/nodes/sql_node.dart';
 import 'package:example/style.dart';
+import 'package:example/workflow/workflow_graph.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_json_view/flutter_json_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:toastification/toastification.dart';
 
 import 'nodes/login_node.dart';
 import 'nodes/simple_qa_node.dart';
 import 'nodes/start_node.dart';
+import 'workflow/workflow_notifier.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ToastificationWrapper(
+    child: ProviderScope(child: MyApp()),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -31,50 +37,27 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key, required this.title});
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  ConsumerState<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  final controller =
-      BoardController(initialState: BoardState(data: [], edges: {}), nodes: [
-    StartNode(
-      label: "开始",
-      uuid: "",
-      depth: -1,
-      offset: Offset.zero,
-    ),
-    LoginNode(
-      label: "Login",
-      uuid: "",
-      depth: -1,
-      offset: Offset.zero,
-    ),
-    SimpleQaNode(
-      label: "Simple QA",
-      uuid: "",
-      depth: -1,
-      offset: Offset.zero,
-    ),
-    SqlNode(
-      label: "SQL Node",
-      uuid: "",
-      depth: -1,
-      offset: Offset.zero,
-    )
-  ]);
+class _MyHomePageState extends ConsumerState<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    // final state = ref.watch(workflowProvider.notifier);
+    final controller = ref.read(workflowProvider.notifier).controller;
     return Scaffold(
       body: InfiniteDrawingBoard(
         controller: controller,
       ),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
+        distance: 50,
+        type: ExpandableFabType.up,
         children: [
           FloatingActionButton.small(
             tooltip: "re center",
@@ -82,6 +65,27 @@ class _MyHomePageState extends State<MyHomePage> {
             child: const Icon(Icons.center_focus_strong),
             onPressed: () {
               controller.reCenter();
+            },
+          ),
+          FloatingActionButton.small(
+            tooltip: "clear",
+            heroTag: null,
+            child: const Icon(Icons.clear_all),
+            onPressed: () {
+              controller.clear();
+            },
+          ),
+          FloatingActionButton.small(
+            tooltip: "excute",
+            heroTag: null,
+            child: const Icon(Icons.start),
+            onPressed: () {
+              WorkflowGraph graph = WorkflowGraph(controller.state.value.data,
+                  controller.state.value.edges.toList());
+
+              Future.microtask(() async {
+                graph.executeWorkflow(ref);
+              });
             },
           ),
           FloatingActionButton.small(

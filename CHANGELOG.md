@@ -1,3 +1,8 @@
+## 0.0.1+5
+
+* remove some codes
+* refactor `example`
+
 ## 0.0.1+4
 
 * make `INode` not abstract.

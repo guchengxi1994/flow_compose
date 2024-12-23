@@ -7,8 +7,6 @@ class INode {
   final double height;
   final String label;
   final String uuid;
-  @Deprecated("maybe will be removed in future")
-  final int depth;
   final Offset offset;
   @Deprecated("maybe will be removed in future")
   final List<INode> children;
@@ -35,7 +33,6 @@ class INode {
     return {
       "uuid": uuid,
       "label": label,
-      "depth": depth,
       "offset": {"dx": offset.dx, "dy": offset.dy},
       "width": width,
       "height": height,
@@ -49,7 +46,6 @@ class INode {
   factory INode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -60,16 +56,16 @@ class INode {
     Map<String, dynamic>? data = json["data"];
 
     return INode(
-        offset: offset,
-        width: width,
-        height: height,
-        nodeName: nodeName,
-        description: description,
-        builderName: builderName,
-        data: data,
-        label: label,
-        uuid: uuid,
-        depth: depth);
+      offset: offset,
+      width: width,
+      height: height,
+      nodeName: nodeName,
+      description: description,
+      builderName: builderName,
+      data: data,
+      label: label,
+      uuid: uuid,
+    );
   }
 
   INode(
@@ -77,7 +73,6 @@ class INode {
       this.height = 400,
       required this.label,
       required this.uuid,
-      required this.depth,
       required this.offset,
       this.children = const [],
       this.nodeName = "base",
@@ -92,10 +87,6 @@ class INode {
 
   List<INode> getChildren() {
     return children;
-  }
-
-  int getDepth() {
-    return depth;
   }
 
   double getHeight() {
@@ -123,7 +114,6 @@ class INode {
       double? height,
       String? label,
       String? uuid,
-      int? depth,
       Offset? offset,
       List<INode>? children,
       Map<String, dynamic>? data}) {
@@ -132,7 +122,6 @@ class INode {
         height: height ?? this.height,
         label: label ?? this.label,
         uuid: uuid ?? this.uuid,
-        depth: depth ?? this.depth,
         offset: offset ?? this.offset,
         children: children ?? this.children,
         builderName: builderName);

@@ -40,6 +40,9 @@ dependencies:
   sqlparser: ^0.40.0
   flutter_expandable_fab: ^2.3.0
   flutter_json_view: ^1.1.5
+  riverpod: ^2.6.0
+  flutter_riverpod: ^2.6.0
+  toastification: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -64,7 +67,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
+  assets:
+    - assets/hammer.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

@@ -6,7 +6,6 @@ class StartNode extends INode {
   StartNode(
       {required super.label,
       required super.uuid,
-      required super.depth,
       required super.offset,
       super.width = 100,
       super.height = 50,
@@ -18,7 +17,6 @@ class StartNode extends INode {
   factory StartNode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -29,15 +27,15 @@ class StartNode extends INode {
     // Map<String, dynamic>? data = json["data"];
 
     return StartNode(
-        offset: offset,
-        width: width,
-        height: height,
-        nodeName: nodeName,
-        description: description,
-        builderName: builderName,
-        label: label,
-        uuid: uuid,
-        depth: depth);
+      offset: offset,
+      width: width,
+      height: height,
+      nodeName: nodeName,
+      description: description,
+      builderName: builderName,
+      label: label,
+      uuid: uuid,
+    );
   }
 
   @override
@@ -46,7 +44,6 @@ class StartNode extends INode {
       double? height,
       String? label,
       String? uuid,
-      int? depth,
       Offset? offset,
       List<INode>? children,
       Map<String, dynamic>? data}) {
@@ -55,7 +52,6 @@ class StartNode extends INode {
       height: height ?? this.height,
       label: label ?? this.label,
       uuid: uuid ?? this.uuid,
-      depth: depth ?? this.depth,
       offset: offset ?? this.offset,
       children: children ?? this.children,
     );
