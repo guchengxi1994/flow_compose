@@ -4,15 +4,17 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 
 const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
-"main.dart.js": "4cd426e5e73ab0632fef4fe3a7fb3d8e",
-"assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
-"assets/AssetManifest.bin": "693635b5258fe5f1cda720cf224f158c",
-"assets/fonts/MaterialIcons-Regular.otf": "f9e627608638c6046d4cd0b60d029e00",
+"main.dart.js": "4132c487a12f495a6c45a0ee19857dad",
+"assets/FontManifest.json": "7df10702a8c60a62e6694f43081d46e7",
+"assets/AssetManifest.bin": "3a0a77354ba5d30bc6adc45d773ef01d",
+"assets/fonts/MaterialIcons-Regular.otf": "7e7666df44b09eaac426feccd31e689e",
+"assets/packages/iconsax_flutter/fonts/FlutterIconsax.ttf": "83c878235f9c448928034fe5bcba1c8a",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "e986ebe42ef785b27164c36a9abc7818",
-"assets/NOTICES": "612c366cd92af4c297ab4ad3f67c89b3",
+"assets/assets/hammer.png": "3b715eaa2b8be6c252e3314991e852de",
+"assets/NOTICES": "4e27a50465b35c8fda39d18c1ea17434",
 "assets/shaders/ink_sparkle.frag": "ecc85a2e95f5e9f53123dcaf8cb9b6ce",
-"assets/AssetManifest.json": "2efbb41d7877d10aac9d091f58ccd7b9",
-"assets/AssetManifest.bin.json": "69a99f98c8b1fb8111c5fb961769fcd8",
+"assets/AssetManifest.json": "9072189f9d981ba4f77d3eb3aa028691",
+"assets/AssetManifest.bin.json": "1568d63aa34e1e1f52cc583e4aeeb7ef",
 "index.html": "4b57aac078e70c7b6cbf41a455164553",
 "/": "4b57aac078e70c7b6cbf41a455164553",
 "manifest.json": "0867c3e13649ac4d06fe34b7b3ddce08",
@@ -32,7 +34,7 @@ const RESOURCES = {"flutter.js": "4b2350e14c6650ba82871f60906437ea",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "version.json": "ff966ab969ba381b900e61629bfb9789",
-"flutter_bootstrap.js": "0e2d8976399faf43f3e2f9a451b6f615"};
+"flutter_bootstrap.js": "572f6e65e3a59264efd22114a00caf4c"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
