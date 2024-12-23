@@ -20,6 +20,10 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   late ValueNotifier<BoardState> boardNotifier =
       widget.controller?.state ?? ValueNotifier(BoardState());
 
+  @Features(features: [
+    FeaturesType.adaptiveBoardState,
+    FeaturesType.adaptiveEdgeState
+  ])
   void _handleScaleUpdate(double scrollDelta) {
     // 减少滚轮滚动幅度
     double zoomChange = scrollDelta * -0.002;
@@ -35,11 +39,13 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     boardNotifier.value = boardNotifier.value.copyWith(scaleFactor: r);
   }
 
+  @Features(features: [FeaturesType.all])
   void _handleDragUpdate(Offset offset) {
     boardNotifier.value = boardNotifier.value
         .copyWith(dragOffset: boardNotifier.value.dragOffset + offset);
   }
 
+  @Features(features: [FeaturesType.all])
   void _paintEdgeFromAToB(String a, String b) {
     INode? aNode = boardNotifier.value.data
         .where((element) => element.getUuid() == a)
@@ -102,6 +108,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     }
   }
 
+  @Features(features: [FeaturesType.all])
   void _handleNodeEdgeCancel() {
     Set<Edge> edges = boardNotifier.value.edges;
     edges.removeWhere((element) => element.uuid == currentUuid);
@@ -111,6 +118,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     currentUuid = null;
   }
 
+  @Features(features: [FeaturesType.all])
   void _handleNodeDelete(String uuid) {
     Set<Edge> edges = boardNotifier.value.edges;
     List<INode> nodes = boardNotifier.value.data;
@@ -123,17 +131,14 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     );
   }
 
-  @Features(features: [
-    FeaturesType.nodeDrag,
-    FeaturesType.boardDrag,
-    FeaturesType.boardScaleChange
-  ])
+  @Features(features: [FeaturesType.all])
   void _addNewNode(INode node) {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: boardNotifier.value.data.toList()..add(node),
     );
   }
 
+  @Features(features: [FeaturesType.all])
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
     var data = boardNotifier.value.data;
     data = data.map((e) {
@@ -160,6 +165,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         boardNotifier.value.copyWith(data: data, edges: edges.toSet());
   }
 
+  @Features(features: [FeaturesType.all])
   _handleNotFocus(INode? node) {
     boardNotifier.value = boardNotifier.value.copyWith(
       focus: node,

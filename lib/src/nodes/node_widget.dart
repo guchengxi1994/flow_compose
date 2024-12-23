@@ -1,4 +1,5 @@
 import 'package:flow_compose/src/nodes/inode.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 typedef OnNodeDrag = void Function(Offset offset);
@@ -117,13 +118,14 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                     feedback: Container(
                       width: 5,
                       height: 5,
-                      color: Colors.red,
+                      color: kDebugMode ? Colors.red : Colors.transparent,
                     ),
                     child: Container(
                       width: 24,
                       height: 24,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
                       ),
                       child: Icon(
                         Icons.output,
@@ -140,6 +142,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       height: 24,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
                       ),
                       child: Icon(
                         Icons.input,
