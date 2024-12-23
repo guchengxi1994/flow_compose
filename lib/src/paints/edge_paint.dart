@@ -41,17 +41,10 @@ void dynamicEdgePaint(
     distance = e.dy * sigmoid((s.dy - subE.dy).abs());
 
     // 计算控制点位置（动态生成控制点）
-    if (s.dy < e.dy) {
-      controlPoint = Offset(
-        (s.dx + e.dx) * 0.5, // 控制点 x 为起点和终点的中点
-        (e.dy + distance) / 2, // 控制点 y 位于两点之上，使曲线弯曲
-      );
-    } else {
-      controlPoint = Offset(
-        (s.dx + e.dx) * 0.5,
-        (e.dy + distance) / 2,
-      );
-    }
+    controlPoint = Offset(
+      (s.dx + e.dx) * 0.5,
+      (e.dy + distance) / 2,
+    );
 
     path.conicTo(controlPoint.dx, controlPoint.dy, subE.dx, subE.dy, 1);
 

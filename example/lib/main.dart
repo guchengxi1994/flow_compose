@@ -45,25 +45,21 @@ class _MyHomePageState extends State<MyHomePage> {
     StartNode(
       label: "开始",
       uuid: "",
-      depth: -1,
       offset: Offset.zero,
     ),
     LoginNode(
       label: "Login",
       uuid: "",
-      depth: -1,
       offset: Offset.zero,
     ),
     SimpleQaNode(
       label: "Simple QA",
       uuid: "",
-      depth: -1,
       offset: Offset.zero,
     ),
     SqlNode(
       label: "SQL Node",
       uuid: "",
-      depth: -1,
       offset: Offset.zero,
     )
   ]);

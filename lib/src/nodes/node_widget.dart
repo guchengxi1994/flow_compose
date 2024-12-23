@@ -1,18 +1,30 @@
-import 'package:flow_compose/src/nodes/edge.dart';
 import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flutter/material.dart';
 
+typedef OnNodeDrag = void Function(Offset offset);
+
+typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
+
+typedef OnEdgeAccept = void Function(String from, String to);
+
+typedef OnNodeDelete = void Function(String uuid);
+
+typedef OnNodeFocus<T extends INode> = void Function(T node);
+
 class NodeWidget<T extends INode> extends StatefulWidget {
-  const NodeWidget(
-      {super.key,
-      required this.node,
-      required this.dragOffset,
-      required this.factor,
-      required this.onNodeDrag,
-      required this.onNodeEdgeCreateOrModify,
-      required this.onNodeEdgeCancel,
-      required this.onEdgeAccept,
-      required this.onNodeDelete});
+  const NodeWidget({
+    super.key,
+    required this.node,
+    required this.dragOffset,
+    required this.factor,
+    required this.onNodeDrag,
+    required this.onNodeEdgeCreateOrModify,
+    required this.onNodeEdgeCancel,
+    required this.onEdgeAccept,
+    required this.onNodeDelete,
+    this.onNodeFocus,
+    this.isFocused = false,
+  });
   final T node;
   final Offset dragOffset;
   final double factor;
@@ -21,6 +33,8 @@ class NodeWidget<T extends INode> extends StatefulWidget {
   final VoidCallback onNodeEdgeCancel;
   final OnEdgeAccept onEdgeAccept;
   final OnNodeDelete onNodeDelete;
+  final OnNodeFocus? onNodeFocus;
+  final bool isFocused;
 
   @override
   State<NodeWidget> createState() => _NodeWidgetState();
@@ -39,16 +53,20 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
     String uuid = node.uuid;
     double factor = widget.factor;
     Offset dragOffset = widget.dragOffset;
+    bool isFocused = widget.isFocused;
 
     return Positioned(
       left: offset.dx * factor + dragOffset.dx,
       top: offset.dy * factor + dragOffset.dy,
       child: Material(
-        elevation: 4,
+        elevation: isFocused ? 10 : 4,
         borderRadius: BorderRadius.circular(4),
         child: Stack(
           children: [
             GestureDetector(
+                onTap: () {
+                  widget.onNodeFocus?.call(node);
+                },
                 onPanUpdate: (details) {
                   // print(details);
                   widget.onNodeDrag(details.delta);

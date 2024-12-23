@@ -31,6 +31,41 @@ class BoardController {
     state.dispose();
   }
 
+  List<String> getPath(INode node) {
+    Map<String, String> m = _buildReverseMap();
+    return _findPathToRoot(node.uuid, m);
+  }
+
+  Map<String, String> _buildReverseMap() {
+    final edges = state.value.edges.toList();
+
+    final reverseMap = <String, String>{};
+    for (var edge in edges) {
+      if (edge.target != null) {
+        reverseMap[edge.target!] = edge.source;
+      }
+    }
+    return reverseMap;
+  }
+
+  List<String> _findPathToRoot(String uuid, Map<String, String> reverseMap) {
+    final path = <String>[];
+    var current = uuid;
+    while (reverseMap.containsKey(current)) {
+      path.add(current);
+      current = reverseMap[current]!;
+    }
+    path.add(current); // 最后添加根节点
+    return path.reversed.toList(); // 返回从根节点到指定子节点的路径
+  }
+
+  setCurrentFocus(INode? node) {
+    if (node == value.focus) {
+      return;
+    }
+    state.value = state.value.copyWith(focus: node);
+  }
+
   String dumpToString() {
     List<Edge> edges = state.value.edges.toList();
     List<INode> nodes = state.value.data;

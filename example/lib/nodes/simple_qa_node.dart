@@ -205,7 +205,6 @@ class SimpleQaNode extends INode {
   SimpleQaNode(
       {required super.label,
       required super.uuid,
-      required super.depth,
       required super.offset,
       super.children,
       super.height = 200,
@@ -223,7 +222,6 @@ class SimpleQaNode extends INode {
   factory SimpleQaNode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -242,7 +240,6 @@ class SimpleQaNode extends INode {
       builderName: builderName,
       label: label,
       uuid: uuid,
-      depth: depth,
       data: data,
     );
   }
@@ -262,7 +259,6 @@ class SimpleQaNode extends INode {
         height: height ?? this.height,
         label: label ?? this.label,
         uuid: uuid ?? this.uuid,
-        depth: depth ?? this.depth,
         offset: offset ?? this.offset,
         children: children ?? this.children);
   }

@@ -160,6 +160,12 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         boardNotifier.value.copyWith(data: data, edges: edges.toSet());
   }
 
+  _handleNotFocus(INode? node) {
+    boardNotifier.value = boardNotifier.value.copyWith(
+      focus: node,
+    );
+  }
+
   @override
   void dispose() {
     boardNotifier.dispose();
@@ -176,6 +182,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
             return Stack(
               children: [
                 GestureDetector(
+                    onTap: () {
+                      _handleNotFocus(null);
+                    },
                     behavior: HitTestBehavior.deferToChild,
                     onPanUpdate: (details) {
                       _handleDragUpdate(details.delta);
@@ -196,6 +205,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                     node: e,
                     dragOffset: state.dragOffset,
                     factor: state.scaleFactor,
+                    isFocused: e.getUuid() == state.focus?.getUuid(),
                     onNodeDelete: (u) {
                       _handleNodeDelete(u);
                     },
@@ -210,6 +220,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                     },
                     onEdgeAccept: (from, to) {
                       _paintEdgeFromAToB(from, to);
+                    },
+                    onNodeFocus: (node) {
+                      _handleNotFocus(node);
                     },
                   );
                 }),
@@ -247,11 +260,11 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 }
 
-class InfiniteCanvasPainter<T, E> extends CustomPainter {
+class InfiniteCanvasPainter extends CustomPainter {
   final Offset offset;
   final double scale;
-  final List<T> data;
-  final Set<E> edges;
+  final List<INode> data;
+  final Set<Edge> edges;
 
   InfiniteCanvasPainter(
       {required this.offset,
@@ -297,7 +310,7 @@ class InfiniteCanvasPainter<T, E> extends CustomPainter {
     // }
 
     if (edges.isNotEmpty) {
-      for (Edge e in edges as Set<Edge>) {
+      for (Edge e in edges) {
         dynamicEdgePaint(canvas, scale, e.start, e.end, offset);
       }
     }

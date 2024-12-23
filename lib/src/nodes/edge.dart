@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 
-typedef OnNodeDrag = void Function(Offset offset);
-// typedef OnBoardSizeChange = void Function(double factor);
-typedef OnNodeEdgeCreateOrModify = void Function(Offset offset);
-
-typedef OnEdgeAccept = void Function(String from, String to);
-
-typedef OnNodeDelete = void Function(String uuid);
-
 class Edge {
   final String uuid;
   final String source;

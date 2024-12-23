@@ -143,7 +143,6 @@ class SqlNode extends INode {
   SqlNode(
       {required super.label,
       required super.uuid,
-      required super.depth,
       required super.offset,
       super.description = "SQL节点执行SQL语句",
       super.height = 150,
@@ -158,7 +157,6 @@ class SqlNode extends INode {
   factory SqlNode.fromJson(Map<String, dynamic> json) {
     String uuid = json["uuid"] ?? "";
     String label = json["label"] ?? "";
-    int depth = json["depth"] ?? 0;
     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
     double width = json["width"] ?? 300;
     double height = json["height"] ?? 400;
@@ -177,7 +175,6 @@ class SqlNode extends INode {
       builderName: builderName,
       label: label,
       uuid: uuid,
-      depth: depth,
       data: data,
     );
   }
@@ -188,7 +185,6 @@ class SqlNode extends INode {
       double? height,
       String? label,
       String? uuid,
-      int? depth,
       Offset? offset,
       List<INode>? children,
       Map<String, dynamic>? data}) {
@@ -197,7 +193,6 @@ class SqlNode extends INode {
       height: height ?? this.height,
       label: label ?? this.label,
       uuid: uuid ?? this.uuid,
-      depth: depth ?? this.depth,
       offset: offset ?? this.offset,
     );
   }
