@@ -21,10 +21,10 @@ class _NodeListWidgetState extends State<NodeListWidget> {
       borderRadius:
           isExpanded ? BorderRadius.circular(20) : BorderRadius.circular(10),
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
         child: AnimatedContainer(
           width: isExpanded ? 300 : 30,
-          height: isExpanded ? 800 : 30,
+          height: isExpanded ? MediaQuery.of(context).size.height - 100 : 30,
           decoration: BoxDecoration(
             borderRadius: isExpanded
                 ? BorderRadius.circular(20)
