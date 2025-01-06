@@ -10,8 +10,8 @@ class INode {
   final Offset offset;
   @Deprecated("maybe will be removed in future")
   final List<INode> children;
-  final String nodeName;
-  final String description;
+  String nodeName;
+  String description;
   NodeBuilder? builder;
   final String builderName;
   Map<String, dynamic>? data;

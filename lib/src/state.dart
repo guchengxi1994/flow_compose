@@ -8,6 +8,7 @@ class BoardState {
   final List<INode> data;
   final Set<Edge> edges;
   INode? focus;
+  Edge? edgeFocused;
 
   BoardState({
     this.scaleFactor = 1.0,
@@ -15,6 +16,7 @@ class BoardState {
     this.data = const [],
     this.edges = const {},
     this.focus,
+    this.edgeFocused,
   });
 
   BoardState copyWith({
@@ -23,6 +25,7 @@ class BoardState {
     List<INode>? data,
     Set<Edge>? edges,
     INode? focus,
+    Edge? edgeFocused,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,
@@ -30,6 +33,7 @@ class BoardState {
       data: data ?? this.data,
       edges: edges ?? this.edges,
       focus: focus,
+      edgeFocused: edgeFocused,
     );
   }
 
