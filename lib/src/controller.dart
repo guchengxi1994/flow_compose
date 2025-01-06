@@ -31,6 +31,27 @@ class BoardController {
     );
   }
 
+  removeEdge(Edge edge) {
+    state.value = state.value.copyWith(
+      edges: state.value.edges.where((element) => element != edge).toSet(),
+    );
+  }
+
+  setEdgeFocused(Edge edge) {
+    state.value = state.value.copyWith(
+      edgeFocused: edge,
+    );
+  }
+
+  /// TODO
+  /// move board to offset
+  /// unimplemented
+  moveToOffset(Offset offset) {
+    // state.value = state.value.copyWith(
+    //   dragOffset: offset,
+    // );
+  }
+
   void dispose() {
     state.dispose();
   }

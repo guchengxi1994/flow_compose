@@ -10,12 +10,12 @@ double sigmoid(double x) {
 
 void dynamicEdgePaint(
     Canvas canvas, double scale, Offset start, Offset end, /*偏移*/ Offset offset,
-    {bool withArrow = true}) {
+    {bool withArrow = true, Color color = Colors.blue}) {
   final arrowPaint = Paint()
-    ..color = Colors.blue
+    ..color = color
     ..style = PaintingStyle.fill;
   final paint = Paint()
-    ..color = Colors.blue
+    ..color = color
     ..style = PaintingStyle.stroke
     ..strokeWidth = 4.0;
 

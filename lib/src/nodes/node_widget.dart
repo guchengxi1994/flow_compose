@@ -99,7 +99,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.close,
+                        Icons.delete,
                         color: Colors.red,
                       ),
                     ))),

@@ -1,3 +1,7 @@
+## 0.0.1+6
+
+* make edges deletable
+
 ## 0.0.1+5
 
 * remove some codes

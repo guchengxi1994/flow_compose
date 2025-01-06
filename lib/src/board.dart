@@ -1,24 +1,25 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
+import 'package:flow_compose/src/nodes/edge_list.dart';
 import 'package:flow_compose/src/nodes/node_list_widget.dart';
 import 'package:flow_compose/src/nodes/nodes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import 'nodes/expanable_widget.dart';
 import 'paints/paints.dart';
 
 class InfiniteDrawingBoard extends StatefulWidget {
-  const InfiniteDrawingBoard({super.key, this.controller});
-  final BoardController? controller;
+  const InfiniteDrawingBoard({super.key, required this.controller});
+  final BoardController controller;
 
   @override
   State<InfiniteDrawingBoard> createState() => _InfiniteDrawingBoardState();
 }
 
 class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
-  late ValueNotifier<BoardState> boardNotifier =
-      widget.controller?.state ?? ValueNotifier(BoardState());
+  late ValueNotifier<BoardState> boardNotifier = widget.controller.state;
 
   @Features(features: [
     FeaturesType.adaptiveBoardState,
@@ -39,10 +40,15 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     boardNotifier.value = boardNotifier.value.copyWith(scaleFactor: r);
   }
 
+  // left +
+  // right -
+  // top +
+  // bottom -
   @Features(features: [FeaturesType.all])
   void _handleDragUpdate(Offset offset) {
     boardNotifier.value = boardNotifier.value
         .copyWith(dragOffset: boardNotifier.value.dragOffset + offset);
+    // debugPrint("${boardNotifier.value.dragOffset}");
   }
 
   @Features(features: [FeaturesType.all])
@@ -235,8 +241,11 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                 Positioned(
                     left: 20,
                     top: 20,
-                    child: NodeListWidget(
-                      nodes: widget.controller?.nodes ?? [],
+                    child: ExpanableWidget(
+                      child1: NodeListWidget(
+                        nodes: widget.controller.nodes,
+                      ),
+                      child2: EdgeListWidget(controller: widget.controller),
                     ))
               ],
             );
@@ -258,7 +267,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
               offset: state.dragOffset,
               scale: state.scaleFactor,
               data: state.data,
-              edges: state.edges),
+              edges: state.edges,
+              focusedEdge: state.edgeFocused),
           child: child,
         );
       },
@@ -271,12 +281,14 @@ class InfiniteCanvasPainter extends CustomPainter {
   final double scale;
   final List<INode> data;
   final Set<Edge> edges;
+  final Edge? focusedEdge;
 
   InfiniteCanvasPainter(
       {required this.offset,
       required this.scale,
       required this.data,
-      required this.edges});
+      required this.edges,
+      this.focusedEdge});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -317,7 +329,12 @@ class InfiniteCanvasPainter extends CustomPainter {
 
     if (edges.isNotEmpty) {
       for (Edge e in edges) {
-        dynamicEdgePaint(canvas, scale, e.start, e.end, offset);
+        if (e == focusedEdge) {
+          dynamicEdgePaint(canvas, scale, e.start, e.end, offset,
+              color: Colors.red);
+        } else {
+          dynamicEdgePaint(canvas, scale, e.start, e.end, offset);
+        }
       }
     }
   }

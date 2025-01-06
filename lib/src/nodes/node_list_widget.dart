@@ -21,67 +21,20 @@ class _NodeListWidgetState extends State<NodeListWidget> {
       borderRadius:
           isExpanded ? BorderRadius.circular(20) : BorderRadius.circular(10),
       child: Padding(
-        padding: EdgeInsets.all(20),
-        child: AnimatedContainer(
-          width: isExpanded ? 300 : 30,
-          height: isExpanded ? 800 : 30,
-          decoration: BoxDecoration(
-            borderRadius: isExpanded
-                ? BorderRadius.circular(20)
-                : BorderRadius.circular(10),
-            color: Colors.transparent,
+        padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ...widget.nodes.map((e) => Draggable(
+                  data: e, feedback: e.fakeWidget(), child: _buildNode(e)))
+            ],
           ),
-          duration: Duration(milliseconds: 500),
-          child: isExpanded
-              ? Stack(
-                  children: [
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 30,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          ...widget.nodes.map((e) => Draggable(
-                              data: e,
-                              feedback: e.fakeWidget(),
-                              child: _buildNode(e)))
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                        top: 10,
-                        left: 10,
-                        child: SizedBox(
-                          height: 30,
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    isExpanded = false;
-                                  });
-                                },
-                                child: Transform.flip(
-                                  flipY: true,
-                                  child: Icon(Icons.expand_more),
-                                ),
-                              )
-                            ],
-                          ),
-                        ))
-                  ],
-                )
-              : InkWell(
-                  onTap: () {
-                    setState(() {
-                      isExpanded = true;
-                    });
-                  },
-                  child: Icon(Icons.expand_more),
-                ),
         ),
       ),
     );
