@@ -14,7 +14,7 @@ class _EdgeListWidgetState extends State<EdgeListWidget> {
   Widget build(BuildContext context) {
     final edges = widget.controller.state.value.edges.toList();
     return ListView.builder(
-      padding: EdgeInsets.only(top: 50),
+      padding: EdgeInsets.only(top: 10),
       itemBuilder: (context, index) {
         return _EdgeBuilder(
           edge: edges[index],
