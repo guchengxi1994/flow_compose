@@ -24,6 +24,9 @@ class _EdgeListWidgetState extends State<EdgeListWidget> {
             });
           },
           onFocus: (Edge e) {
+            if (e.uuid != "fake") {
+              widget.controller.moveToOffset((e.start + e.end) / 2);
+            }
             widget.controller.setEdgeFocused(e);
           },
         );

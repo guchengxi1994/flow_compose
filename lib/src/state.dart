@@ -9,6 +9,7 @@ class BoardState {
   final Set<Edge> edges;
   INode? focus;
   Edge? edgeFocused;
+  Size? paintSize;
 
   BoardState({
     this.scaleFactor = 1.0,
@@ -17,6 +18,7 @@ class BoardState {
     this.edges = const {},
     this.focus,
     this.edgeFocused,
+    this.paintSize,
   });
 
   BoardState copyWith({
@@ -26,6 +28,7 @@ class BoardState {
     Set<Edge>? edges,
     INode? focus,
     Edge? edgeFocused,
+    Size? paintSize,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,
@@ -34,6 +37,7 @@ class BoardState {
       edges: edges ?? this.edges,
       focus: focus,
       edgeFocused: edgeFocused,
+      paintSize: paintSize ?? this.paintSize,
     );
   }
 
