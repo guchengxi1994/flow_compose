@@ -21,6 +21,10 @@ class BoardController {
     state.value = newValue;
   }
 
+  void setSize(Size size) {
+    state.value.paintSize = size;
+  }
+
   void clear() {
     state.value = BoardState();
   }
@@ -43,13 +47,19 @@ class BoardController {
     );
   }
 
-  /// TODO
   /// move board to offset
-  /// unimplemented
   moveToOffset(Offset offset) {
-    // state.value = state.value.copyWith(
-    //   dragOffset: offset,
-    // );
+    reCenter();
+    if (state.value.paintSize == null) {
+      return;
+    }
+
+    final center = Offset(
+        state.value.paintSize!.width / 2, state.value.paintSize!.height / 2);
+
+    state.value = state.value.copyWith(
+      dragOffset: center - offset,
+    );
   }
 
   void dispose() {

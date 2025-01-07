@@ -268,7 +268,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
               scale: state.scaleFactor,
               data: state.data,
               edges: state.edges,
-              focusedEdge: state.edgeFocused),
+              focusedEdge: state.edgeFocused,
+              controller: widget.controller),
           child: child,
         );
       },
@@ -282,16 +283,19 @@ class InfiniteCanvasPainter extends CustomPainter {
   final List<INode> data;
   final Set<Edge> edges;
   final Edge? focusedEdge;
+  final BoardController controller;
 
   InfiniteCanvasPainter(
       {required this.offset,
       required this.scale,
       required this.data,
       required this.edges,
-      this.focusedEdge});
+      this.focusedEdge,
+      required this.controller});
 
   @override
   void paint(Canvas canvas, Size size) {
+    controller.setSize(size);
     final Paint paint = Paint()
       ..color = Colors.grey[300]!
       ..strokeWidth = 2.0

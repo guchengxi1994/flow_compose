@@ -1,3 +1,7 @@
+## 0.0.1+7
+
+* center edges when hovering on edges
+
 ## 0.0.1+6
 
 * make edges deletable
