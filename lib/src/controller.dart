@@ -47,6 +47,16 @@ class BoardController {
     );
   }
 
+  changeEditableStatus(bool editable) {
+    if (state.value.editable == editable) {
+      return;
+    }
+
+    state.value = state.value.copyWith(
+      editable: editable,
+    );
+  }
+
   /// move board to offset
   moveToOffset(Offset offset) {
     reCenter();

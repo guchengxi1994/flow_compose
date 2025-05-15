@@ -7,29 +7,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WorkflowNotifier extends Notifier<INode?> {
-  final controller =
-      BoardController(initialState: BoardState(data: [], edges: {}), nodes: [
-    StartNode(
-      label: "开始",
-      uuid: "",
-      offset: Offset.zero,
-    ),
-    LoginNode(
-      label: "Login",
-      uuid: "",
-      offset: Offset.zero,
-    ),
-    SimpleQaNode(
-      label: "Simple QA",
-      uuid: "",
-      offset: Offset.zero,
-    ),
-    SqlNode(
-      label: "SQL Node",
-      uuid: "",
-      offset: Offset.zero,
-    )
-  ]);
+  final controller = BoardController(
+      initialState: BoardState(editable: true, data: [], edges: {}),
+      nodes: [
+        StartNode(
+          label: "开始",
+          uuid: "",
+          offset: Offset.zero,
+        ),
+        LoginNode(
+          label: "Login",
+          uuid: "",
+          offset: Offset.zero,
+        ),
+        SimpleQaNode(
+          label: "Simple QA",
+          uuid: "",
+          offset: Offset.zero,
+        ),
+        SqlNode(
+          label: "SQL Node",
+          uuid: "",
+          offset: Offset.zero,
+        )
+      ]);
 
   @override
   INode? build() {
