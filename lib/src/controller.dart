@@ -153,6 +153,7 @@ class BoardController {
   }
 
   void reCreate(List<INode> nodes, List<Edge> edges) {
-    state.value = BoardState(data: nodes, edges: edges.toSet());
+    state.value = BoardState(
+        data: nodes, edges: edges.toSet(), editable: state.value.editable);
   }
 }
