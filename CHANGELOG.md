@@ -1,3 +1,7 @@
+## 0.0.2
+
+* fix some bugs
+
 ## 0.0.1+7
 
 * center edges when hovering on edges

@@ -171,6 +171,14 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   });
             },
           ),
+          FloatingActionButton.small(
+            tooltip: "switch mode",
+            heroTag: null,
+            child: const Icon(Icons.switch_access_shortcut),
+            onPressed: () {
+              controller.changeEditableStatus(!controller.state.value.editable);
+            },
+          ),
         ],
       ),
     );

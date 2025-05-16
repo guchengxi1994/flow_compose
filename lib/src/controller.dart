@@ -47,6 +47,16 @@ class BoardController {
     );
   }
 
+  changeEditableStatus(bool editable) {
+    if (state.value.editable == editable) {
+      return;
+    }
+
+    state.value = state.value.copyWith(
+      editable: editable,
+    );
+  }
+
   /// move board to offset
   moveToOffset(Offset offset) {
     reCenter();
@@ -143,6 +153,7 @@ class BoardController {
   }
 
   void reCreate(List<INode> nodes, List<Edge> edges) {
-    state.value = BoardState(data: nodes, edges: edges.toSet());
+    state.value = BoardState(
+        data: nodes, edges: edges.toSet(), editable: state.value.editable);
   }
 }

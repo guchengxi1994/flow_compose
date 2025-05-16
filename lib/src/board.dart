@@ -186,93 +186,113 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: boardNotifier,
-      builder: (context, state, child) {
-        Widget child = DragTarget<INode>(
-          builder: (c, _, __) {
-            return Stack(
-              children: [
-                GestureDetector(
-                    onTap: () {
-                      _handleNotFocus(null);
-                    },
-                    behavior: HitTestBehavior.deferToChild,
-                    onPanUpdate: (details) {
-                      _handleDragUpdate(details.delta);
-                    },
-                    child: Listener(
-                        onPointerSignal: (pointerSignal) {
-                          if (pointerSignal is PointerScrollEvent) {
-                            _handleScaleUpdate(pointerSignal.scrollDelta.dy);
-                          }
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ))),
-                ...state.data.map((e) {
-                  return NodeWidget<INode>(
-                    node: e,
-                    dragOffset: state.dragOffset,
-                    factor: state.scaleFactor,
-                    isFocused: e.getUuid() == state.focus?.getUuid(),
-                    onNodeDelete: (u) {
-                      _handleNodeDelete(u);
-                    },
-                    onNodeDrag: (offset) {
-                      _handleNodeDrag(e.getUuid(), offset, state.scaleFactor);
-                    },
-                    onNodeEdgeCreateOrModify: (offset) {
-                      _modifyFakeEdge(e, offset);
-                    },
-                    onNodeEdgeCancel: () {
-                      _handleNodeEdgeCancel();
-                    },
-                    onEdgeAccept: (from, to) {
-                      _paintEdgeFromAToB(from, to);
-                    },
-                    onNodeFocus: (node) {
-                      _handleNotFocus(node);
-                    },
+    return Center(
+      child: Container(
+        color: Colors.white,
+        child: ClipRect(
+          child: ValueListenableBuilder(
+            valueListenable: boardNotifier,
+            builder: (context, state, child) {
+              Widget child = DragTarget<INode>(
+                builder: (c, _, __) {
+                  return Stack(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            _handleNotFocus(null);
+                          },
+                          behavior: HitTestBehavior.deferToChild,
+                          onPanUpdate: (details) {
+                            _handleDragUpdate(details.delta);
+                          },
+                          child: Listener(
+                              onPointerSignal: (pointerSignal) {
+                                if (pointerSignal is PointerScrollEvent) {
+                                  _handleScaleUpdate(
+                                      pointerSignal.scrollDelta.dy);
+                                }
+                              },
+                              child: Container(
+                                color: Colors.transparent,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ))),
+                      ...state.data.map((e) {
+                        return NodeWidget<INode>(
+                          isEditable: state.editable,
+                          node: e,
+                          dragOffset: state.dragOffset,
+                          factor: state.scaleFactor,
+                          isFocused: e.getUuid() == state.focus?.getUuid(),
+                          onNodeDelete: (u) {
+                            _handleNodeDelete(u);
+                          },
+                          onNodeDrag: (offset) {
+                            _handleNodeDrag(
+                                e.getUuid(), offset, state.scaleFactor);
+                          },
+                          onNodeEdgeCreateOrModify: (offset) {
+                            _modifyFakeEdge(e, offset);
+                          },
+                          onNodeEdgeCancel: () {
+                            _handleNodeEdgeCancel();
+                          },
+                          onEdgeAccept: (from, to) {
+                            _paintEdgeFromAToB(from, to);
+                          },
+                          onNodeFocus: (node) {
+                            _handleNotFocus(node);
+                          },
+                        );
+                      }),
+                      if (state.editable)
+                        Positioned(
+                            left: 20,
+                            top: 20,
+                            child: ExpanableWidget(
+                              child1: NodeListWidget(
+                                nodes: widget.controller.nodes,
+                              ),
+                              child2:
+                                  EdgeListWidget(controller: widget.controller),
+                            ))
+                    ],
                   );
-                }),
-                Positioned(
-                    left: 20,
-                    top: 20,
-                    child: ExpanableWidget(
-                      child1: NodeListWidget(
-                        nodes: widget.controller.nodes,
-                      ),
-                      child2: EdgeListWidget(controller: widget.controller),
-                    ))
-              ],
-            );
-          },
-          onAcceptWithDetails: (details) {
-            debugPrint(
-                "drag offset ${state.dragOffset}  accept details ${details.offset}  abslute ${details.offset - state.dragOffset}");
-            final node = details.data.copyWith(
-                uuid: uuid.v4(),
-                offset: (details.offset - state.dragOffset) *
-                    1 /
-                    state.scaleFactor);
-            _addNewNode(node);
-          },
-        );
+                },
+                onAcceptWithDetails: (details) {
+                  debugPrint(
+                      "drag offset ${state.dragOffset}  accept details ${details.offset}  abslute ${details.offset - state.dragOffset}");
+                  RenderBox box = context.findRenderObject() as RenderBox;
+                  Offset localOffset = box.globalToLocal(details.offset);
 
-        return CustomPaint(
-          painter: InfiniteCanvasPainter(
-              offset: state.dragOffset,
-              scale: state.scaleFactor,
-              data: state.data,
-              edges: state.edges,
-              focusedEdge: state.edgeFocused,
-              controller: widget.controller),
-          child: child,
-        );
-      },
+                  // final node = details.data.copyWith(
+                  //     uuid: uuid.v4(),
+                  //     offset: (details.offset - state.dragOffset) *
+                  //         1 /
+                  //         state.scaleFactor);
+                  final node = details.data.copyWith(
+                    uuid: uuid.v4(),
+                    offset: (localOffset - state.dragOffset) *
+                        (1 / state.scaleFactor),
+                  );
+                  _addNewNode(node);
+                },
+              );
+
+              return CustomPaint(
+                painter: InfiniteCanvasPainter(
+                    offset: state.dragOffset,
+                    scale: state.scaleFactor,
+                    data: state.data,
+                    edges: state.edges,
+                    focusedEdge: state.edgeFocused,
+                    controller: widget.controller),
+                child: child,
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }
@@ -297,8 +317,8 @@ class InfiniteCanvasPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     controller.setSize(size);
     final Paint paint = Paint()
-      ..color = Colors.grey[300]!
-      ..strokeWidth = 2.0
+      ..color = Colors.grey[200]!
+      ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
     // 应用缩放和偏移

@@ -45,14 +45,10 @@ class _ExpanableWidgetState extends State<ExpanableWidget> {
                   children: [
                     Column(
                       children: [
-                        Expanded(
-                          child: PageView(
-                              controller: pageController,
-                              children: [widget.child1, widget.child2]),
-                        ),
                         SizedBox(
-                          height: 30,
+                          height: 50,
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             spacing: 10,
                             children: [
                               Spacer(),
@@ -67,7 +63,10 @@ class _ExpanableWidgetState extends State<ExpanableWidget> {
                                           duration: Duration(milliseconds: 500),
                                           curve: Curves.easeInOut);
                                     },
-                                    child: Icon(Icons.class_)),
+                                    child: Tooltip(
+                                      message: "切换到节点页面",
+                                      child: Icon(Icons.class_),
+                                    )),
                               ),
                               SizedBox(
                                 width: 30,
@@ -80,10 +79,18 @@ class _ExpanableWidgetState extends State<ExpanableWidget> {
                                           duration: Duration(milliseconds: 500),
                                           curve: Curves.easeInOut);
                                     },
-                                    child: Icon(Icons.line_axis)),
+                                    child: Tooltip(
+                                      message: "切换到边页面",
+                                      child: Icon(Icons.line_axis),
+                                    )),
                               ),
                             ],
                           ),
+                        ),
+                        Expanded(
+                          child: PageView(
+                              controller: pageController,
+                              children: [widget.child1, widget.child2]),
                         ),
                       ],
                     ),

@@ -15,26 +15,17 @@ class _NodeListWidgetState extends State<NodeListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      elevation: 10,
-      borderRadius:
-          isExpanded ? BorderRadius.circular(20) : BorderRadius.circular(10),
-      child: Padding(
-        padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 30,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ...widget.nodes.map((e) => Draggable(
-                  data: e, feedback: e.fakeWidget(), child: _buildNode(e)))
-            ],
-          ),
+    return Padding(
+      padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            ...widget.nodes.map((e) => Draggable(
+                data: e, feedback: e.fakeWidget(), child: _buildNode(e)))
+          ],
         ),
       ),
     );

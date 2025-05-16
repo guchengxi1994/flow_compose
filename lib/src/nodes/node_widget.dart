@@ -25,6 +25,7 @@ class NodeWidget<T extends INode> extends StatefulWidget {
     required this.onNodeDelete,
     this.onNodeFocus,
     this.isFocused = false,
+    required this.isEditable,
   });
   final T node;
   final Offset dragOffset;
@@ -36,6 +37,7 @@ class NodeWidget<T extends INode> extends StatefulWidget {
   final OnNodeDelete onNodeDelete;
   final OnNodeFocus? onNodeFocus;
   final bool isFocused;
+  final bool isEditable;
 
   @override
   State<NodeWidget> createState() => _NodeWidgetState();
@@ -75,13 +77,20 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Colors.blueAccent),
                     color: Colors.white,
                   ),
                   width: width * factor,
                   height: height * factor,
                   alignment: Alignment.center,
                   child: node.builder == null
-                      ? Text(label)
+                      ? Text(
+                          label,
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        )
                       : node.builder!(context),
                 )),
             Positioned(
@@ -100,54 +109,67 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       ),
                       child: Icon(
                         Icons.delete,
-                        color: Colors.red,
+                        color: const Color.fromARGB(255, 237, 118, 118),
+                        size: 16,
                       ),
                     ))),
             Positioned(
                 right: 0,
-                top: 0.5 * height * factor,
-                child: Draggable(
-                    data: uuid,
-                    onDragUpdate: (details) {
-                      // print(details);
-                      widget.onNodeEdgeCreateOrModify(details.delta);
-                    },
-                    onDragEnd: (details) {
-                      widget.onNodeEdgeCancel();
-                    },
-                    feedback: Container(
-                      width: 5,
-                      height: 5,
-                      color: kDebugMode ? Colors.red : Colors.transparent,
-                    ),
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
+                top: 0.5 * height * factor - 12,
+                child: MouseRegion(
+                  cursor: widget.isEditable
+                      ? SystemMouseCursors.grab
+                      : SystemMouseCursors.forbidden,
+                  child: Draggable(
+                      data: uuid,
+                      onDragUpdate: (details) {
+                        if (widget.isEditable) {
+                          // print(details);
+                          widget.onNodeEdgeCreateOrModify(details.delta);
+                        }
+                      },
+                      onDragEnd: (details) {
+                        widget.onNodeEdgeCancel();
+                      },
+                      feedback: Container(
+                        width: 5,
+                        height: 5,
+                        color: kDebugMode ? Colors.red : Colors.transparent,
                       ),
-                      child: Icon(
-                        Icons.output,
-                        color: Colors.grey[300],
-                      ),
-                    ))),
+                      child: Container(
+                        width: 5,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          // color: Colors.white,
+                          color: Colors.blueAccent,
+                        ),
+                        // child: Icon(
+                        //   Icons.output,
+                        //   color: Colors.grey[300],
+                        //   size: 16,
+                        // ),
+                      )),
+                )),
             Positioned(
-                left: 0,
-                top: 0.5 * height * factor,
+                left: 1,
+                top: 0.5 * height * factor - 12,
                 child: DragTarget<String>(
                   builder: (c, _, __) {
                     return Container(
-                      width: 24,
+                      width: 5,
                       height: 24,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.white,
-                      ),
-                      child: Icon(
-                        Icons.input,
-                        color: willAccept ? Colors.green : Colors.grey[300],
-                      ),
+                          borderRadius: BorderRadius.circular(12),
+                          // color: Colors.blueAccent,
+                          color: willAccept
+                              ? Colors.blueAccent
+                              : Colors.grey[100]),
+                      // child: Icon(
+                      //   Icons.input,
+                      //   color: willAccept ? Colors.green : Colors.grey[300],
+                      //   size: 16,
+                      // ),
                     );
                   },
                   onWillAcceptWithDetails: (details) {

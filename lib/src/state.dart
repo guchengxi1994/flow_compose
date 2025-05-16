@@ -10,6 +10,7 @@ class BoardState {
   INode? focus;
   Edge? edgeFocused;
   Size? paintSize;
+  final bool editable;
 
   BoardState({
     this.scaleFactor = 1.0,
@@ -19,6 +20,7 @@ class BoardState {
     this.focus,
     this.edgeFocused,
     this.paintSize,
+    this.editable = true,
   });
 
   BoardState copyWith({
@@ -29,6 +31,7 @@ class BoardState {
     INode? focus,
     Edge? edgeFocused,
     Size? paintSize,
+    bool? editable,
   }) {
     return BoardState(
       scaleFactor: scaleFactor ?? this.scaleFactor,
@@ -38,6 +41,7 @@ class BoardState {
       focus: focus,
       edgeFocused: edgeFocused,
       paintSize: paintSize ?? this.paintSize,
+      editable: editable ?? this.editable,
     );
   }
 
