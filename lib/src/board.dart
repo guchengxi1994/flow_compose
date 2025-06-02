@@ -218,7 +218,12 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                                 height: double.infinity,
                               ))),
                       ...state.data.map((e) {
+                        final hasPrev = state.edges
+                            .where((element) => element.target == e.uuid)
+                            .isNotEmpty;
+
                         return NodeWidget<INode>(
+                          hasPrev: hasPrev,
                           isEditable: state.editable,
                           node: e,
                           dragOffset: state.dragOffset,
@@ -297,6 +302,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 }
 
+const double gap = 200;
+
 class InfiniteCanvasPainter extends CustomPainter {
   final Offset offset;
   final double scale;
@@ -318,6 +325,11 @@ class InfiniteCanvasPainter extends CustomPainter {
     controller.setSize(size);
     final Paint paint = Paint()
       ..color = Colors.grey[200]!
+      ..strokeWidth = 0.75
+      ..style = PaintingStyle.stroke;
+
+    final Paint paintBold = Paint()
+      ..color = Colors.grey[200]!
       ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
 
@@ -330,17 +342,33 @@ class InfiniteCanvasPainter extends CustomPainter {
     final double gridSize = 50.0;
     for (double i = -2000; i <= 2000; i += gridSize) {
       // 垂直线
-      canvas.drawLine(
-        Offset(i, -2000),
-        Offset(i, 2000),
-        paint,
-      );
+      if (i % gap == 0) {
+        canvas.drawLine(
+          Offset(i, -2000),
+          Offset(i, 2000),
+          paintBold,
+        );
+      } else {
+        canvas.drawLine(
+          Offset(i, -2000),
+          Offset(i, 2000),
+          paint,
+        );
+      }
       // 水平线
-      canvas.drawLine(
-        Offset(-2000, i),
-        Offset(2000, i),
-        paint,
-      );
+      if (i % gap == 0) {
+        canvas.drawLine(
+          Offset(-2000, i),
+          Offset(2000, i),
+          paintBold,
+        );
+      } else {
+        canvas.drawLine(
+          Offset(-2000, i),
+          Offset(2000, i),
+          paint,
+        );
+      }
     }
 
     canvas.restore();

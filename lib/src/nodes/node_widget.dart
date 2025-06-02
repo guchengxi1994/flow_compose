@@ -13,20 +13,20 @@ typedef OnNodeDelete = void Function(String uuid);
 typedef OnNodeFocus<T extends INode> = void Function(T node);
 
 class NodeWidget<T extends INode> extends StatefulWidget {
-  const NodeWidget({
-    super.key,
-    required this.node,
-    required this.dragOffset,
-    required this.factor,
-    required this.onNodeDrag,
-    required this.onNodeEdgeCreateOrModify,
-    required this.onNodeEdgeCancel,
-    required this.onEdgeAccept,
-    required this.onNodeDelete,
-    this.onNodeFocus,
-    this.isFocused = false,
-    required this.isEditable,
-  });
+  const NodeWidget(
+      {super.key,
+      required this.node,
+      required this.dragOffset,
+      required this.factor,
+      required this.onNodeDrag,
+      required this.onNodeEdgeCreateOrModify,
+      required this.onNodeEdgeCancel,
+      required this.onEdgeAccept,
+      required this.onNodeDelete,
+      this.onNodeFocus,
+      this.isFocused = false,
+      required this.isEditable,
+      required this.hasPrev});
   final T node;
   final Offset dragOffset;
   final double factor;
@@ -38,6 +38,7 @@ class NodeWidget<T extends INode> extends StatefulWidget {
   final OnNodeFocus? onNodeFocus;
   final bool isFocused;
   final bool isEditable;
+  final bool hasPrev;
 
   @override
   State<NodeWidget> createState() => _NodeWidgetState();
@@ -115,7 +116,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                     ))),
             Positioned(
                 right: 0,
-                top: 0.5 * height * factor - 12,
+                top: 0.2 * height * factor,
                 child: MouseRegion(
                   cursor: widget.isEditable
                       ? SystemMouseCursors.grab
@@ -138,7 +139,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                       ),
                       child: Container(
                         width: 5,
-                        height: 24,
+                        height: 0.6 * height * factor,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           // color: Colors.white,
@@ -153,18 +154,20 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                 )),
             Positioned(
                 left: 1,
-                top: 0.5 * height * factor - 12,
+                top: 0.2 * height * factor,
                 child: DragTarget<String>(
                   builder: (c, _, __) {
                     return Container(
                       width: 5,
-                      height: 24,
+                      height: 0.6 * height * factor,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           // color: Colors.blueAccent,
                           color: willAccept
-                              ? Colors.blueAccent
-                              : Colors.grey[100]),
+                              ? Colors.greenAccent
+                              : widget.hasPrev
+                                  ? Colors.blueAccent
+                                  : Colors.grey[100]),
                       // child: Icon(
                       //   Icons.input,
                       //   color: willAccept ? Colors.green : Colors.grey[300],

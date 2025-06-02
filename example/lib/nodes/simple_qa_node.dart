@@ -209,7 +209,6 @@ class SimpleQaNode extends INode {
       {required super.label,
       required super.uuid,
       required super.offset,
-      super.children,
       super.height = 200,
       super.width = 300,
       super.nodeName = "单输入输出问答节点",
@@ -258,11 +257,11 @@ class SimpleQaNode extends INode {
       List<INode>? children,
       Map<String, dynamic>? data}) {
     return SimpleQaNode(
-        width: width ?? this.width,
-        height: height ?? this.height,
-        label: label ?? this.label,
-        uuid: uuid ?? this.uuid,
-        offset: offset ?? this.offset,
-        children: children ?? this.children);
+      width: width ?? this.width,
+      height: height ?? this.height,
+      label: label ?? this.label,
+      uuid: uuid ?? this.uuid,
+      offset: offset ?? this.offset,
+    );
   }
 }

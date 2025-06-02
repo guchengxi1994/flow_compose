@@ -1,3 +1,7 @@
+## 0.0.2+1
+
+* style change
+
 ## 0.0.2
 
 * fix some bugs

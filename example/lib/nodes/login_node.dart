@@ -84,7 +84,6 @@ class LoginNode extends INode {
       {required super.label,
       required super.uuid,
       required super.offset,
-      super.children,
       super.description = "登录节点，获取登录身份校验信息",
       super.height = 100,
       super.width = 200,
@@ -132,12 +131,12 @@ class LoginNode extends INode {
       List<INode>? children,
       Map<String, dynamic>? data}) {
     return LoginNode(
-        width: width ?? this.width,
-        height: height ?? this.height,
-        label: label ?? this.label,
-        uuid: uuid ?? this.uuid,
-        offset: offset ?? this.offset,
-        children: children ?? this.children);
+      width: width ?? this.width,
+      height: height ?? this.height,
+      label: label ?? this.label,
+      uuid: uuid ?? this.uuid,
+      offset: offset ?? this.offset,
+    );
   }
 }
 

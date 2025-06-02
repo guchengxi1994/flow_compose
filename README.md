@@ -1,8 +1,12 @@
-flow chart for flutter (for personal use).
+# Flow Chart Editor for Flutter
 
-Inspired by [flutter_flow_chart](https://github.com/alnitak/flutter_flow_chart), to build a tool for AI agent or other flow chart.
+Try it here 👉 [Flow Compose Demo](https://guchengxi1994.github.io/flow_compose/)
 
-This is in a early stage, and not ready for use.
+This project is inspired by [flutter_flow_chart](https://github.com/alnitak/flutter_flow_chart), and aims to become a tool for building flowcharts for AI agents and other use cases.
+
+> ⚠️ **Note:** This project is in its early stage and **not ready for production use**.  
+> It is a **frontend-only** package.
+
 
 ![demo](./images/image.gif)
 

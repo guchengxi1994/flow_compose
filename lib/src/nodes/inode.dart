@@ -8,8 +8,6 @@ class INode {
   final String label;
   final String uuid;
   final Offset offset;
-  @Deprecated("maybe will be removed in future")
-  final List<INode> children;
   String nodeName;
   String description;
   NodeBuilder? builder;
@@ -74,7 +72,6 @@ class INode {
       required this.label,
       required this.uuid,
       required this.offset,
-      this.children = const [],
       this.nodeName = "base",
       this.description = "Base node, just for testing purposes",
       this.builder,
@@ -84,10 +81,6 @@ class INode {
   Offset get outputPoint => Offset(offset.dx + width, offset.dy + 0.5 * height);
 
   Offset get inputPoint => Offset(offset.dx, offset.dy + 0.5 * height);
-
-  List<INode> getChildren() {
-    return children;
-  }
 
   double getHeight() {
     return height;
@@ -123,7 +116,6 @@ class INode {
         label: label ?? this.label,
         uuid: uuid ?? this.uuid,
         offset: offset ?? this.offset,
-        children: children ?? this.children,
         builderName: builderName);
   }
 }
