@@ -184,6 +184,32 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     super.dispose();
   }
 
+  void _populatePrevData(List<INode> data, Set<Edge> edges) {
+    // 创建 uuid -> INode 的快速索引
+    final Map<String, INode> nodeMap = {
+      for (var node in data) node.uuid: node,
+    };
+
+    for (var edge in edges) {
+      final sourceNode = nodeMap[edge.source];
+      final targetNode = nodeMap[edge.target];
+
+      // 安全性检查
+      if (sourceNode == null || targetNode == null) continue;
+
+      targetNode.prevData ??= targetNode.prevData ?? {};
+
+      // final map = (sourceNode.data ?? {})..addAll(sourceNode.prevData);
+      Map<String, Map<String, dynamic>?> map = {};
+      if (sourceNode.prevData != null) {
+        map.addAll(sourceNode.prevData!);
+      }
+      map[sourceNode.uuid] = sourceNode.data;
+
+      targetNode.prevData = map;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -195,6 +221,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
             builder: (context, state, child) {
               Widget child = DragTarget<INode>(
                 builder: (c, _, __) {
+                  // debugPrint("repaint edge");
+                  _populatePrevData(state.data, state.edges);
                   return Stack(
                     children: [
                       GestureDetector(
@@ -218,12 +246,10 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                                 height: double.infinity,
                               ))),
                       ...state.data.map((e) {
-                        final hasPrev = state.edges
-                            .where((element) => element.target == e.uuid)
-                            .isNotEmpty;
+                        // print(e.prevData);
 
                         return NodeWidget<INode>(
-                          hasPrev: hasPrev,
+                          hasPrev: e.prevData != null && e.prevData!.isNotEmpty,
                           isEditable: state.editable,
                           node: e,
                           dragOffset: state.dragOffset,
@@ -302,7 +328,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 }
 
-const double gap = 200;
+const double _boldGap = 200;
 
 class InfiniteCanvasPainter extends CustomPainter {
   final Offset offset;
@@ -342,7 +368,7 @@ class InfiniteCanvasPainter extends CustomPainter {
     final double gridSize = 50.0;
     for (double i = -2000; i <= 2000; i += gridSize) {
       // 垂直线
-      if (i % gap == 0) {
+      if (i % _boldGap == 0) {
         canvas.drawLine(
           Offset(i, -2000),
           Offset(i, 2000),
@@ -356,7 +382,7 @@ class InfiniteCanvasPainter extends CustomPainter {
         );
       }
       // 水平线
-      if (i % gap == 0) {
+      if (i % _boldGap == 0) {
         canvas.drawLine(
           Offset(-2000, i),
           Offset(2000, i),
