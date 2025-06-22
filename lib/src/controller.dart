@@ -10,9 +10,12 @@ class BoardController {
   // nodes which can be dragged to board
   final List<INode> nodes;
 
+  final bool confirmBeforeDelete;
+
   BoardController({
     BoardState? initialState,
     required this.nodes,
+    this.confirmBeforeDelete = false,
   }) : state = ValueNotifier(initialState ?? BoardState());
 
   BoardState get value => state.value;

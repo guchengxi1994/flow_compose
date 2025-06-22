@@ -1,5 +1,6 @@
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
+import 'package:flow_compose/src/confirm_dialog.dart';
 import 'package:flow_compose/src/nodes/edge_list.dart';
 import 'package:flow_compose/src/nodes/node_list_widget.dart';
 import 'package:flow_compose/src/nodes/nodes.dart';
@@ -125,16 +126,35 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   @Features(features: [FeaturesType.all])
-  void _handleNodeDelete(String uuid) {
-    Set<Edge> edges = boardNotifier.value.edges;
-    List<INode> nodes = boardNotifier.value.data;
-    nodes.removeWhere((element) => element.uuid == uuid);
-    edges.removeWhere(
-        (element) => element.source == uuid || element.target == uuid);
-    boardNotifier.value = boardNotifier.value.copyWith(
-      edges: edges.toSet(),
-      data: nodes,
-    );
+  void _handleNodeDelete(String uuid) async {
+    bool? delete = false;
+    if (widget.controller.confirmBeforeDelete) {
+      delete = await showGeneralDialog(
+          barrierDismissible: true,
+          barrierColor: Colors.transparent,
+          barrierLabel: 'ConfirmDialog',
+          context: context,
+          pageBuilder: (c, _, __) {
+            return Center(
+              child: ConfirmDialog(
+                content: "确定删除吗？",
+                height: 80,
+              ),
+            );
+          }) as bool?;
+    }
+
+    if (delete == true) {
+      Set<Edge> edges = boardNotifier.value.edges;
+      List<INode> nodes = boardNotifier.value.data;
+      nodes.removeWhere((element) => element.uuid == uuid);
+      edges.removeWhere(
+          (element) => element.source == uuid || element.target == uuid);
+      boardNotifier.value = boardNotifier.value.copyWith(
+        edges: edges.toSet(),
+        data: nodes,
+      );
+    }
   }
 
   @Features(features: [FeaturesType.all])

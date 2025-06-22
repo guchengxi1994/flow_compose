@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WorkflowNotifier extends Notifier<INode?> {
   final controller = BoardController(
+      confirmBeforeDelete: true,
       initialState: BoardState(editable: true, data: [], edges: {}),
       nodes: [
         StartNode(
