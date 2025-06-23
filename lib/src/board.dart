@@ -301,6 +301,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                             left: 20,
                             top: 20,
                             child: ExpanableWidget(
+                              maxWidth: widget.controller.style.sidebarMaxWidth,
+                              maxHeight:
+                                  widget.controller.style.sidebarMaxHeight,
                               child1: NodeListWidget(
                                 nodes: widget.controller.nodes,
                               ),

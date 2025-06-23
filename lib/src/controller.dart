@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flow_compose/src/board_style.dart';
 import 'package:flow_compose/src/nodes/edge.dart';
 import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flow_compose/src/state.dart';
@@ -12,10 +13,13 @@ class BoardController {
 
   final bool confirmBeforeDelete;
 
+  final BoardStyle style;
+
   BoardController({
     BoardState? initialState,
     required this.nodes,
     this.confirmBeforeDelete = false,
+    this.style = const BoardStyle(),
   }) : state = ValueNotifier(initialState ?? BoardState());
 
   BoardState get value => state.value;
