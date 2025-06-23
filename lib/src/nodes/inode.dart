@@ -13,6 +13,7 @@ class INode {
   NodeBuilder? builder;
   final String builderName;
   Map<String, dynamic>? data;
+  Map<String, Map<String, dynamic>?>? prevData;
 
   Widget fakeWidget() {
     return Material(
@@ -38,6 +39,7 @@ class INode {
       "description": description,
       "builderName": builderName,
       "data": data ?? {},
+      "prevData": prevData ?? {}
     };
   }
 
@@ -52,18 +54,19 @@ class INode {
         json["description"] ?? "Base node, just for testing purposes";
     String builderName = json["builderName"] ?? "base";
     Map<String, dynamic>? data = json["data"];
+    Map<String, Map<String, dynamic>> prevData = json['prevData'] ?? {};
 
     return INode(
-      offset: offset,
-      width: width,
-      height: height,
-      nodeName: nodeName,
-      description: description,
-      builderName: builderName,
-      data: data,
-      label: label,
-      uuid: uuid,
-    );
+        offset: offset,
+        width: width,
+        height: height,
+        nodeName: nodeName,
+        description: description,
+        builderName: builderName,
+        data: data,
+        label: label,
+        uuid: uuid,
+        prevData: prevData);
   }
 
   INode(
@@ -76,6 +79,7 @@ class INode {
       this.description = "Base node, just for testing purposes",
       this.builder,
       this.data,
+      this.prevData = const {},
       required this.builderName});
 
   Offset get outputPoint => Offset(offset.dx + width, offset.dy + 0.5 * height);
@@ -102,14 +106,14 @@ class INode {
     return width;
   }
 
-  INode copyWith(
-      {double? width,
-      double? height,
-      String? label,
-      String? uuid,
-      Offset? offset,
-      List<INode>? children,
-      Map<String, dynamic>? data}) {
+  INode copyWith({
+    double? width,
+    double? height,
+    String? label,
+    String? uuid,
+    Offset? offset,
+    List<INode>? children,
+  }) {
     return INode(
         width: width ?? this.width,
         height: height ?? this.height,

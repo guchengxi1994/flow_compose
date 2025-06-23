@@ -32,7 +32,7 @@ class _ExpanableWidgetState extends State<ExpanableWidget> {
         padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
         child: AnimatedContainer(
           width: isExpanded ? 240 : 30,
-          height: isExpanded ? MediaQuery.of(context).size.height - 100 : 30,
+          height: isExpanded ? 600 : 30,
           decoration: BoxDecoration(
             borderRadius: isExpanded
                 ? BorderRadius.circular(20)

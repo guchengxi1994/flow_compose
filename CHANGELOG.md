@@ -1,3 +1,10 @@
+## 0.3.0+1
+* small fix
+
+## 0.3.0
+
+* children node can visit parent node's data
+
 ## 0.0.2+1
 
 * style change
