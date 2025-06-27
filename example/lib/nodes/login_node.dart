@@ -130,12 +130,12 @@ class LoginNode extends INode {
       Offset? offset,
       List<INode>? children,
       Map<String, dynamic>? data}) {
-    return LoginNode(
-      width: width ?? this.width,
-      height: height ?? this.height,
-      label: label ?? this.label,
-      uuid: uuid ?? this.uuid,
-      offset: offset ?? this.offset,
+    return super.copyWith(
+      width: width,
+      height: height,
+      label: label,
+      uuid: uuid,
+      offset: offset,
     );
   }
 }

@@ -181,22 +181,4 @@ class SqlNode extends INode {
       data: data,
     );
   }
-
-  @override
-  INode copyWith(
-      {double? width,
-      double? height,
-      String? label,
-      String? uuid,
-      Offset? offset,
-      List<INode>? children,
-      Map<String, dynamic>? data}) {
-    return SqlNode(
-      width: width ?? this.width,
-      height: height ?? this.height,
-      label: label ?? this.label,
-      uuid: uuid ?? this.uuid,
-      offset: offset ?? this.offset,
-    );
-  }
 }

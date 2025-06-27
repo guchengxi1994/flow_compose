@@ -94,6 +94,7 @@ class BoardController {
 
   void dispose() {
     state.dispose();
+    streamController.close();
   }
 
   List<List<String>> getPath(INode node) {

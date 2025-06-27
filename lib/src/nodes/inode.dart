@@ -128,20 +128,40 @@ class INode {
     return width;
   }
 
+  /// 子类必须调用 super.copyWith，否则状态监听器将丢失！
+  ///
+  /// 示例：
+  ///   ```dart
+  ///   @override
+  ///   INode copyWith({ ... }) {
+  ///     final node = super.copyWith(...);
+  ///     // 子类额外逻辑
+  ///     return node;
+  ///   }
+  ///   ```
+  @mustCallSuper
   INode copyWith({
     double? width,
     double? height,
     String? label,
     String? uuid,
     Offset? offset,
-    List<INode>? children,
   }) {
-    return INode(
-        width: width ?? this.width,
-        height: height ?? this.height,
-        label: label ?? this.label,
-        uuid: uuid ?? this.uuid,
-        offset: offset ?? this.offset,
-        builderName: builderName);
+    INode node = INode(
+      width: width ?? this.width,
+      height: height ?? this.height,
+      label: label ?? this.label,
+      uuid: uuid ?? this.uuid,
+      offset: offset ?? this.offset,
+      builderName: builderName,
+    );
+
+    node.data = data;
+    node.prevData = prevData;
+    node.builder = builder;
+    node.nodeName = nodeName;
+    node.description = description;
+    node.onStatusChanged = onStatusChanged; // 👈 非常关键
+    return node;
   }
 }

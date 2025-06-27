@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flow_compose/src/annotation.dart';
 import 'package:flow_compose/src/confirm_dialog.dart';
@@ -208,6 +209,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     super.dispose();
   }
 
+  final eq = const DeepCollectionEquality().equals;
+
   void _populatePrevData(List<INode> data, Set<Edge> edges) {
     // 创建 uuid -> INode 的快速索引
     final Map<String, INode> nodeMap = {
@@ -229,6 +232,11 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
         map.addAll(sourceNode.prevData!);
       }
       map[sourceNode.uuid] = sourceNode.data;
+
+      if (!eq(targetNode.prevData, map)) {
+        targetNode.onStatusChanged!(
+            targetNode, EventType.nodePrevStatusChanged);
+      }
 
       targetNode.prevData = map;
     }
@@ -333,7 +341,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                     offset: (localOffset - state.dragOffset) *
                         (1 / state.scaleFactor),
                   );
-                  node.onStatusChanged = (n, e) {
+                  node.onStatusChanged ??= (n, e) {
                     widget.controller.streamController
                         .add((NodeData(n.uuid), e));
                   };

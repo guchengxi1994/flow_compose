@@ -1,4 +1,5 @@
 enum EventType {
+  nodePrevStatusChanged,
   nodeDataChanged,
   edgeCreated,
   edgeRemoved,
