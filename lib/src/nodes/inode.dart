@@ -1,5 +1,7 @@
+import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 
+typedef OnNodeStatusChanged = void Function(INode node, EventType eventType);
 typedef NodeBuilder = Widget Function(BuildContext context);
 
 class INode {
@@ -14,6 +16,26 @@ class INode {
   final String builderName;
   Map<String, dynamic>? data;
   Map<String, Map<String, dynamic>?>? prevData;
+
+  OnNodeStatusChanged? onStatusChanged; // 👈 添加监听器
+
+  void updateData(String key, dynamic value) {
+    data ??= {};
+    data![key] = value;
+
+    if (onStatusChanged != null) {
+      // 👇 主动触发回调
+      onStatusChanged!(this, EventType.nodeDataChanged);
+    }
+  }
+
+  void replaceAndUpdateData(Map<String, dynamic> map) {
+    data = map;
+    if (onStatusChanged != null) {
+      // 👇 主动触发回调
+      onStatusChanged!(this, EventType.nodeDataChanged);
+    }
+  }
 
   Widget fakeWidget() {
     return Material(
@@ -106,20 +128,40 @@ class INode {
     return width;
   }
 
+  /// 子类必须调用 super.copyWith，否则状态监听器将丢失！
+  ///
+  /// 示例：
+  ///   ```dart
+  ///   @override
+  ///   INode copyWith({ ... }) {
+  ///     final node = super.copyWith(...);
+  ///     // 子类额外逻辑
+  ///     return node;
+  ///   }
+  ///   ```
+  @mustCallSuper
   INode copyWith({
     double? width,
     double? height,
     String? label,
     String? uuid,
     Offset? offset,
-    List<INode>? children,
   }) {
-    return INode(
-        width: width ?? this.width,
-        height: height ?? this.height,
-        label: label ?? this.label,
-        uuid: uuid ?? this.uuid,
-        offset: offset ?? this.offset,
-        builderName: builderName);
+    INode node = INode(
+      width: width ?? this.width,
+      height: height ?? this.height,
+      label: label ?? this.label,
+      uuid: uuid ?? this.uuid,
+      offset: offset ?? this.offset,
+      builderName: builderName,
+    );
+
+    node.data = data;
+    node.prevData = prevData;
+    node.builder = builder;
+    node.nodeName = nodeName;
+    node.description = description;
+    node.onStatusChanged = onStatusChanged; // 👈 非常关键
+    return node;
   }
 }

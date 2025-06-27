@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 
 class ExpanableWidget extends StatefulWidget {
   const ExpanableWidget(
-      {super.key, required this.child1, required this.child2});
+      {super.key,
+      required this.child1,
+      required this.child2,
+      this.maxHeight = 600,
+      this.minHeight = 30,
+      this.minWidth = 30,
+      this.maxWidth = 240});
   final Widget child1;
   final Widget child2;
+  final double minWidth;
+  final double minHeight;
+  final double maxWidth;
+  final double maxHeight;
 
   @override
   State<ExpanableWidget> createState() => _ExpanableWidgetState();
@@ -31,8 +41,8 @@ class _ExpanableWidgetState extends State<ExpanableWidget> {
       child: Padding(
         padding: isExpanded ? EdgeInsets.all(20) : EdgeInsets.all(5),
         child: AnimatedContainer(
-          width: isExpanded ? 240 : 30,
-          height: isExpanded ? 600 : 30,
+          width: isExpanded ? widget.maxWidth : widget.minWidth,
+          height: isExpanded ? widget.maxHeight : widget.minHeight,
           decoration: BoxDecoration(
             borderRadius: isExpanded
                 ? BorderRadius.circular(20)

@@ -1,7 +1,10 @@
-## 0.3.0+1
+## 0.0.4
+* add streamcontroller
+
+## 0.0.3+1
 * small fix
 
-## 0.3.0
+## 0.0.3
 
 * children node can visit parent node's data
 

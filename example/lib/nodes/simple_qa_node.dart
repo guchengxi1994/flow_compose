@@ -245,23 +245,4 @@ class SimpleQaNode extends INode {
       data: data,
     );
   }
-
-  @override
-  INode copyWith(
-      {double? width,
-      double? height,
-      String? label,
-      String? uuid,
-      int? depth,
-      Offset? offset,
-      List<INode>? children,
-      Map<String, dynamic>? data}) {
-    return SimpleQaNode(
-      width: width ?? this.width,
-      height: height ?? this.height,
-      label: label ?? this.label,
-      uuid: uuid ?? this.uuid,
-      offset: offset ?? this.offset,
-    );
-  }
 }
