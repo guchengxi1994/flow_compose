@@ -35,6 +35,11 @@ class WorkflowNotifier extends Notifier<INode?> {
 
   @override
   INode? build() {
+    controller.stream.listen((v) {
+      bool isNode = v.$1 is NodeData;
+      debugPrint("${isNode ? "node" : "edge"} ${v.$1.uuid}  ${v.$2.name}");
+    });
+
     return null;
   }
 

@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flow_compose/src/board_style.dart';
 import 'package:flow_compose/src/nodes/edge.dart';
+import 'package:flow_compose/src/nodes/events.dart';
 import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flow_compose/src/state.dart';
 import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 
 typedef OnEdgeCreated = void Function(Edge edge);
 
@@ -18,14 +21,17 @@ class BoardController {
   final BoardStyle style;
 
   final OnEdgeCreated? onEdgeCreated;
-  final OnNodeStatusChanged? onNodeStatusChanged;
+
+  final StreamController<(EventData, EventType)> streamController =
+      StreamController.broadcast();
+
+  Stream<(EventData, EventType)> get stream => streamController.stream;
 
   BoardController({
     BoardState? initialState,
     required this.nodes,
     this.confirmBeforeDelete = false,
     this.style = const BoardStyle(),
-    this.onNodeStatusChanged,
     this.onEdgeCreated,
   }) : state = ValueNotifier(initialState ?? BoardState());
 
@@ -169,5 +175,9 @@ class BoardController {
   void reCreate(List<INode> nodes, List<Edge> edges) {
     state.value = BoardState(
         data: nodes, edges: edges.toSet(), editable: state.value.editable);
+  }
+
+  INode? getNodeData(String uuid) {
+    return state.value.data.firstWhereOrNull((element) => element.uuid == uuid);
   }
 }

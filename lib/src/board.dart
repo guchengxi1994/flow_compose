@@ -165,6 +165,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: boardNotifier.value.data.toList()..add(node),
     );
+    node.onStatusChanged!(node, EventType.nodeCreated);
   }
 
   @Features(features: [FeaturesType.all])
@@ -332,7 +333,10 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                     offset: (localOffset - state.dragOffset) *
                         (1 / state.scaleFactor),
                   );
-                  node.onStatusChanged = widget.controller.onNodeStatusChanged;
+                  node.onStatusChanged = (n, e) {
+                    widget.controller.streamController
+                        .add((NodeData(n.uuid), e));
+                  };
                   _addNewNode(node);
                 },
               );
