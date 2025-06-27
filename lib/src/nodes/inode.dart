@@ -1,5 +1,7 @@
+import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 
+typedef OnNodeStatusChanged = void Function(INode node, EventType eventType);
 typedef NodeBuilder = Widget Function(BuildContext context);
 
 class INode {
@@ -14,6 +16,26 @@ class INode {
   final String builderName;
   Map<String, dynamic>? data;
   Map<String, Map<String, dynamic>?>? prevData;
+
+  OnNodeStatusChanged? onStatusChanged; // 👈 添加监听器
+
+  void updateData(String key, dynamic value) {
+    data ??= {};
+    data![key] = value;
+
+    if (onStatusChanged != null) {
+      // 👇 主动触发回调
+      onStatusChanged!(this, EventType.nodeDataChanged);
+    }
+  }
+
+  void replaceAndUpdateData(Map<String, dynamic> map) {
+    data = map;
+    if (onStatusChanged != null) {
+      // 👇 主动触发回调
+      onStatusChanged!(this, EventType.nodeDataChanged);
+    }
+  }
 
   Widget fakeWidget() {
     return Material(

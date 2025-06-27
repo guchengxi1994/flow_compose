@@ -6,6 +6,8 @@ import 'package:flow_compose/src/nodes/inode.dart';
 import 'package:flow_compose/src/state.dart';
 import 'package:flutter/material.dart';
 
+typedef OnEdgeCreated = void Function(Edge edge);
+
 class BoardController {
   final ValueNotifier<BoardState> state;
   // nodes which can be dragged to board
@@ -15,11 +17,16 @@ class BoardController {
 
   final BoardStyle style;
 
+  final OnEdgeCreated? onEdgeCreated;
+  final OnNodeStatusChanged? onNodeStatusChanged;
+
   BoardController({
     BoardState? initialState,
     required this.nodes,
     this.confirmBeforeDelete = false,
     this.style = const BoardStyle(),
+    this.onNodeStatusChanged,
+    this.onEdgeCreated,
   }) : state = ValueNotifier(initialState ?? BoardState());
 
   BoardState get value => state.value;

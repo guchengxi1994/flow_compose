@@ -72,6 +72,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       Set<Edge> edges = boardNotifier.value.edges;
       edges.add(edge);
       boardNotifier.value = boardNotifier.value.copyWith(edges: edges.toSet());
+      if (widget.controller.onEdgeCreated != null) {
+        widget.controller.onEdgeCreated!(edge);
+      }
     }
   }
 
@@ -329,6 +332,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                     offset: (localOffset - state.dragOffset) *
                         (1 / state.scaleFactor),
                   );
+                  node.onStatusChanged = widget.controller.onNodeStatusChanged;
                   _addNewNode(node);
                 },
               );
