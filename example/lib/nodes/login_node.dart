@@ -1,6 +1,5 @@
 import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
-import 'package:example/workflow/workflow_notifier.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,72 +80,72 @@ class _LoginNodeConfigWidgetState extends State<LoginNodeConfigWidget> {
   }
 }
 
-class LoginNode extends INode {
-  LoginNode(
-      {required super.label,
-      required super.uuid,
-      required super.offset,
-      super.description = "登录节点，获取登录身份校验信息",
-      super.height = 100,
-      super.width = 200,
-      super.nodeName = "登录节点",
-      super.builderName = "LoginNode",
-      super.data}) {
-    builder = (context, n) {
-      return LoginNodeWidget(
-        node: n,
-      );
-    };
-  }
+// class LoginNode extends INode {
+//   LoginNode(
+//       {required super.label,
+//       required super.uuid,
+//       required super.offset,
+//       super.description = "登录节点，获取登录身份校验信息",
+//       super.height = 100,
+//       super.width = 200,
+//       super.nodeName = "登录节点",
+//       super.builderName = "LoginNode",
+//       super.data}) {
+//     builder = (context, n) {
+//       return LoginNodeWidget(
+//         node: n,
+//       );
+//     };
+//   }
 
-  factory LoginNode.fromJson(Map<String, dynamic> json) {
-    String uuid = json["uuid"] ?? "";
-    String label = json["label"] ?? "";
-    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
-    double width = json["width"] ?? 300;
-    double height = json["height"] ?? 400;
-    String nodeName = json["nodeName"] ?? "base";
-    String description =
-        json["description"] ?? "Base node, just for testing purposes";
-    String builderName = json["builderName"] ?? "base";
-    Map<String, dynamic>? data = json["data"];
+//   factory LoginNode.fromJson(Map<String, dynamic> json) {
+//     String uuid = json["uuid"] ?? "";
+//     String label = json["label"] ?? "";
+//     Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
+//     double width = json["width"] ?? 300;
+//     double height = json["height"] ?? 400;
+//     String nodeName = json["nodeName"] ?? "base";
+//     String description =
+//         json["description"] ?? "Base node, just for testing purposes";
+//     String builderName = json["builderName"] ?? "base";
+//     Map<String, dynamic>? data = json["data"];
 
-    return LoginNode(
-      offset: offset,
-      width: width,
-      height: height,
-      nodeName: nodeName,
-      description: description,
-      builderName: builderName,
-      label: label,
-      uuid: uuid,
-      data: data,
-    );
-  }
+//     return LoginNode(
+//       offset: offset,
+//       width: width,
+//       height: height,
+//       nodeName: nodeName,
+//       description: description,
+//       builderName: builderName,
+//       label: label,
+//       uuid: uuid,
+//       data: data,
+//     );
+//   }
 
-  @override
-  INode copyWith(
-      {double? width,
-      double? height,
-      String? label,
-      String? uuid,
-      int? depth,
-      Offset? offset,
-      List<INode>? children,
-      Map<String, dynamic>? data}) {
-    return super.copyWith(
-      width: width,
-      height: height,
-      label: label,
-      uuid: uuid,
-      offset: offset,
-    );
-  }
-}
+//   @override
+//   INode copyWith(
+//       {double? width,
+//       double? height,
+//       String? label,
+//       String? uuid,
+//       int? depth,
+//       Offset? offset,
+//       List<INode>? children,
+//       Map<String, dynamic>? data}) {
+//     return super.copyWith(
+//       width: width,
+//       height: height,
+//       label: label,
+//       uuid: uuid,
+//       offset: offset,
+//     );
+//   }
+// }
 
 class LoginNodeWidget extends ConsumerWidget {
   const LoginNodeWidget({super.key, required this.node});
-  final INode node;
+  final NodeModel node;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -159,12 +158,12 @@ class LoginNodeWidget extends ConsumerWidget {
               if (v != null) {
                 debugPrint("node value ${v.toString()}");
                 node.data = v;
-                ref.read(workflowProvider.notifier).updateNode(node);
+                // ref.read(workflowProvider.notifier).updateNode(node);
               }
             });
           },
           child: Container(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
                 color: Colors.white,

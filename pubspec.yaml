@@ -1,6 +1,6 @@
 name: flow_compose
 description: "flow chart for flutter."
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/guchengxi1994/flow_compose
 
 environment:

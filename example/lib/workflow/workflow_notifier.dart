@@ -6,35 +6,34 @@ import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WorkflowNotifier extends Notifier<INode?> {
+class WorkflowNotifier extends Notifier<NodeModel?> {
   final controller = BoardController(
-      confirmBeforeDelete: true,
-      initialState: BoardState(editable: true, data: [], edges: {}),
-      nodes: [
-        StartNode(
-          label: "开始",
-          uuid: "",
-          offset: Offset.zero,
-        ),
-        LoginNode(
-          label: "Login",
-          uuid: "",
-          offset: Offset.zero,
-        ),
-        SimpleQaNode(
-          label: "Simple QA",
-          uuid: "",
-          offset: Offset.zero,
-        ),
-        SqlNode(
-          label: "SQL Node",
-          uuid: "",
-          offset: Offset.zero,
-        )
-      ]);
+    confirmBeforeDelete: true,
+    initialState: BoardState(editable: true, data: [], edges: {}),
+  );
 
   @override
-  INode? build() {
+  NodeModel? build() {
+    controller.nodeRenderRegistry["LoginNode"] = (ctx, node) {
+      return LoginNodeWidget(node: node);
+    };
+    controller.setConfig("LoginNode", ExtraNodeConfig(width: 120, height: 60));
+    controller.nodeRenderRegistry["SimpleQaNode"] = (ctx, node) {
+      return SimpleQAWidget(node: node);
+    };
+    controller.setConfig("SimpleQaNode",
+        ExtraNodeConfig(width: 400, height: 300, description: "Balabla"));
+    controller.nodeRenderRegistry["SqlNode"] = (ctx, node) {
+      return SqlNodeWidget(node: node);
+    };
+    controller.setConfig(
+        "SqlNode",
+        ExtraNodeConfig(
+            width: 200, height: 150, description: "SqlNode description"));
+    controller.nodeRenderRegistry["StartNode"] = (ctx, node) {
+      return StartNodeWidget(node: node);
+    };
+
     controller.stream.listen((v) {
       bool isNode = v.$1 is NodeData;
       debugPrint("${isNode ? "node" : "edge"} ${v.$1.uuid}  ${v.$2.name}");
@@ -42,22 +41,7 @@ class WorkflowNotifier extends Notifier<INode?> {
 
     return null;
   }
-
-  updateNode(INode node) {
-    controller.updateNode(node);
-  }
-
-  changeCurrentNode(INode? node) {
-    if (node?.getUuid() == state?.getUuid()) {
-      return;
-    }
-    state = node;
-  }
-
-  bool isNodeSelected(INode node) {
-    return state?.getUuid() == node.getUuid();
-  }
 }
 
 final workflowProvider =
-    NotifierProvider<WorkflowNotifier, INode?>(() => WorkflowNotifier());
+    NotifierProvider<WorkflowNotifier, NodeModel?>(() => WorkflowNotifier());

@@ -3,19 +3,17 @@ import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'workflow_notifier.dart';
-
-extension Excuter on INode {
+extension Excuter on NodeModel {
   Future<void> execute(WidgetRef ref) async {
     // 执行节点逻辑
     debugPrint('Executing node: $label ===> $data');
-    ref.read(workflowProvider.notifier).changeCurrentNode(this);
+    // ref.read(workflowProvider.notifier).changeCurrentNode(this);
     await Future.delayed(Duration(seconds: 3));
   }
 }
 
 class WorkflowGraph {
-  final List<INode> nodes;
+  final List<NodeModel> nodes;
   final List<Edge> edges;
 
   final Map<String, List<String>> adjList = {};
@@ -51,7 +49,7 @@ class WorkflowGraph {
       final node = nodes.firstWhere((n) => n.uuid == nodeId);
       await node.execute(ref);
     }
-    ref.read(workflowProvider.notifier).changeCurrentNode(null);
+    // ref.read(workflowProvider.notifier).changeCurrentNode(null);
     ToastUtils.sucess(null, title: "workflow done ...");
   }
 

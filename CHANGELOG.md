@@ -1,3 +1,6 @@
+## 0.0.5
+* **[IMPORTANT]** this version is not compatible with previous versions.
+
 ## 0.0.4
 * add streamcontroller
 

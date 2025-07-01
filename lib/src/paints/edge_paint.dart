@@ -9,68 +9,64 @@ double sigmoid(double x) {
 }
 
 void dynamicEdgePaint(
-    Canvas canvas, double scale, Offset start, Offset end, /*偏移*/ Offset offset,
-    {bool withArrow = true, Color color = Colors.blue}) {
-  final arrowPaint = Paint()
-    ..color = color
-    ..style = PaintingStyle.fill;
+  Canvas canvas,
+  double scale,
+  Offset start,
+  Offset end,
+  Offset offset, {
+  bool withArrow = true,
+  Color color = Colors.blue,
+}) {
   final paint = Paint()
     ..color = color
     ..style = PaintingStyle.stroke
-    ..strokeWidth = 4.0;
+    ..strokeWidth = 3.0;
+
+  final arrowPaint = Paint()
+    ..color = color
+    ..style = PaintingStyle.fill;
+
+  final s = start * scale + offset;
+  final e = end * scale + offset;
+
+  final dx = e.dx - s.dx;
+  final absDx = dx.abs();
+
+  final shortLine = () {
+    if (dx < 0) return 40.0 + absDx * 0.5;
+    if (absDx < 40) return 40.0;
+    return 20.0;
+  }();
 
   final path = Path();
-
-  var s = (start * scale + offset);
-  var e = (end * scale + offset);
-  var controlPoint = e;
   path.moveTo(s.dx, s.dy);
 
-  if ((s.dx - e.dx).abs() > 100) {
-    s = s + Offset(gap, 0);
-    path.lineTo(s.dx, s.dy);
-  }
+  // 拆点：起点、短线后点、中线曲线、终点前点、终点
+  final p1 = Offset(s.dx + shortLine, s.dy);
+  final p4 = Offset(e.dx - shortLine, e.dy);
+  final cp1 = Offset((p1.dx + p4.dx) / 2, s.dy);
+  final cp2 = Offset((p1.dx + p4.dx) / 2, e.dy);
 
-  // 起始高度和终止高度差不多在同一高度，不需要绘制曲线
-  if ((s.dy - e.dy).abs() <= 10) {
-    path.lineTo(e.dx, e.dy);
-  } else {
-    var subE = Offset(e.dx - gap * 3, e.dy);
-    double distance = 50;
-
-    distance = e.dy * sigmoid((s.dy - subE.dy).abs());
-
-    // 计算控制点位置（动态生成控制点）
-    controlPoint = Offset(
-      (s.dx + e.dx) * 0.5,
-      (e.dy + distance) / 2,
-    );
-
-    path.conicTo(controlPoint.dx, controlPoint.dy, subE.dx, subE.dy, 1);
-
-    path.lineTo(e.dx - gap, e.dy);
-  }
+  path.lineTo(p1.dx, p1.dy); // 出口短线
+  path.cubicTo(cp1.dx, cp1.dy, cp2.dx, cp2.dy, p4.dx, p4.dy);
+  path.lineTo(e.dx, e.dy); // 入口短线
 
   canvas.drawPath(path, paint);
+
   if (withArrow) {
-    // 计算箭头的方向
-    final arrowAngle = pi / 6; // 箭头的开口角度
-    final arrowLength = 12.0; // 箭头的长度
+    const arrowAngle = pi / 6;
+    const arrowLength = 12.0;
+    final direction = 0.0;
 
-    // 曲线的切线方向（根据终点和控制点计算）
-    final tangent = 0;
-
-    // 箭头的两个点
     final arrowPoint1 = Offset(
-      e.dx - arrowLength * cos(tangent - arrowAngle),
-      e.dy - arrowLength * sin(tangent - arrowAngle),
+      e.dx - arrowLength * cos(direction - arrowAngle),
+      e.dy - arrowLength * sin(direction - arrowAngle),
     );
     final arrowPoint2 = Offset(
-      e.dx - arrowLength * cos(tangent + arrowAngle),
-      e.dy - arrowLength * sin(tangent + arrowAngle),
+      e.dx - arrowLength * cos(direction + arrowAngle),
+      e.dy - arrowLength * sin(direction + arrowAngle),
     );
 
-    // 绘制箭头
     final arrowPath = Path()
       ..moveTo(e.dx, e.dy)
       ..lineTo(arrowPoint1.dx, arrowPoint1.dy)

@@ -55,19 +55,19 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
   @Features(features: [FeaturesType.all])
   void _paintEdgeFromAToB(String a, String b) {
-    INode? aNode = boardNotifier.value.data
-        .where((element) => element.getUuid() == a)
+    NodeModel? aNode = boardNotifier.value.data
+        .where((element) => element.uuid == a)
         .firstOrNull;
 
-    INode? bNode = boardNotifier.value.data
-        .where((element) => element.getUuid() == b)
+    NodeModel? bNode = boardNotifier.value.data
+        .where((element) => element.uuid == b)
         .firstOrNull;
 
     if (aNode != null && bNode != null) {
       Edge edge = Edge(
           uuid: uuid.v4(),
-          source: aNode.getUuid(),
-          target: bNode.getUuid(),
+          source: aNode.uuid,
+          target: bNode.uuid,
           start: aNode.outputPoint,
           end: bNode.inputPoint);
       Set<Edge> edges = boardNotifier.value.edges;
@@ -84,7 +84,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   var uuid = Uuid();
 
   @Features(features: [FeaturesType.all])
-  void _modifyFakeEdge(INode start, Offset offset) {
+  void _modifyFakeEdge(NodeModel start, Offset offset) {
     currentUuid ??= uuid.v4();
     // print("start.outputPoint ${start.outputPoint}");
 
@@ -106,7 +106,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
       );
     } else {
       fakeEdge = Edge(
-        source: start.getUuid(),
+        source: start.uuid,
         end: start.outputPoint,
         uuid: currentUuid!,
         start: start.outputPoint,
@@ -150,7 +150,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
     if (delete == true) {
       Set<Edge> edges = boardNotifier.value.edges;
-      List<INode> nodes = boardNotifier.value.data;
+      List<NodeModel> nodes = boardNotifier.value.data;
       nodes.removeWhere((element) => element.uuid == uuid);
       edges.removeWhere(
           (element) => element.source == uuid || element.target == uuid);
@@ -162,7 +162,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   @Features(features: [FeaturesType.all])
-  void _addNewNode(INode node) {
+  void _addNewNode(NodeModel node) {
     boardNotifier.value = boardNotifier.value.copyWith(
       data: boardNotifier.value.data.toList()..add(node),
     );
@@ -173,7 +173,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   void _handleNodeDrag(String uuid, Offset offset, double factor) {
     var data = boardNotifier.value.data;
     data = data.map((e) {
-      if (e.getUuid() == uuid) {
+      if (e.uuid == uuid) {
         return e.copyWith(offset: e.offset + offset * 1 / factor);
       }
       return e;
@@ -197,9 +197,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
   }
 
   @Features(features: [FeaturesType.all])
-  _handleNotFocus(INode? node) {
+  _handleNotFocus(NodeModel? node) {
     boardNotifier.value = boardNotifier.value.copyWith(
-      focus: node,
+      focused: node?.uuid,
     );
   }
 
@@ -211,9 +211,9 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
   final eq = const DeepCollectionEquality().equals;
 
-  void _populatePrevData(List<INode> data, Set<Edge> edges) {
-    // 创建 uuid -> INode 的快速索引
-    final Map<String, INode> nodeMap = {
+  void _populatePrevData(List<NodeModel> data, Set<Edge> edges) {
+    // 创建 uuid -> NodeModel 的快速索引
+    final Map<String, NodeModel> nodeMap = {
       for (var node in data) node.uuid: node,
     };
 
@@ -244,6 +244,15 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.controller.nodeRenderRegistry.isEmpty) {
+      return const SizedBox.shrink(
+        child: Text(
+          "Error: NodeRenderRegistry is empty",
+          style: TextStyle(color: Colors.red, fontSize: 20),
+        ),
+      );
+    }
+
     return Center(
       child: Container(
         color: Colors.white,
@@ -251,7 +260,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
           child: ValueListenableBuilder(
             valueListenable: boardNotifier,
             builder: (context, state, child) {
-              Widget child = DragTarget<INode>(
+              Widget child = DragTarget<String>(
                 builder: (c, _, __) {
                   // debugPrint("repaint edge");
                   _populatePrevData(state.data, state.edges);
@@ -278,21 +287,18 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                                 height: double.infinity,
                               ))),
                       ...state.data.map((e) {
-                        print("e.uuid  ${e.uuid}");
-
-                        return NodeWidget<INode>(
+                        return NodeWidget(
                           hasPrev: e.prevData != null && e.prevData!.isNotEmpty,
                           isEditable: state.editable,
                           node: e,
                           dragOffset: state.dragOffset,
                           factor: state.scaleFactor,
-                          isFocused: e.getUuid() == state.focus?.getUuid(),
+                          isFocused: e.uuid == state.focused,
                           onNodeDelete: (u) {
                             _handleNodeDelete(u);
                           },
                           onNodeDrag: (offset) {
-                            _handleNodeDrag(
-                                e.getUuid(), offset, state.scaleFactor);
+                            _handleNodeDrag(e.uuid, offset, state.scaleFactor);
                           },
                           onNodeEdgeCreateOrModify: (offset) {
                             _modifyFakeEdge(e, offset);
@@ -306,6 +312,8 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                           onNodeFocus: (node) {
                             _handleNotFocus(node);
                           },
+                          nodeRenderRegistry:
+                              widget.controller.nodeRenderRegistry,
                         );
                       }),
                       if (state.editable)
@@ -317,7 +325,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                               maxHeight:
                                   widget.controller.style.sidebarMaxHeight,
                               child1: NodeListWidget(
-                                nodes: widget.controller.nodes,
+                                controller: widget.controller,
                               ),
                               child2:
                                   EdgeListWidget(controller: widget.controller),
@@ -332,15 +340,21 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                   Offset localOffset = box.globalToLocal(details.offset);
 
                   // final node = details.data.copyWith(
-                  //     uuid: uuid.v4(),
-                  //     offset: (details.offset - state.dragOffset) *
-                  //         1 /
-                  //         state.scaleFactor);
-                  final node = details.data.copyWith(
-                    uuid: uuid.v4(),
-                    offset: (localOffset - state.dragOffset) *
-                        (1 / state.scaleFactor),
-                  );
+                  //   uuid: uuid.v4(),
+                  //   offset: (localOffset - state.dragOffset) *
+                  //       (1 / state.scaleFactor),
+                  // );
+                  final config =
+                      widget.controller.getExtraNodeConfig(details.data);
+                  final node = NodeModel(
+                      width: config.width,
+                      height: config.height,
+                      description: config.description,
+                      uuid: uuid.v4(),
+                      type: details.data,
+                      label: details.data,
+                      offset: (localOffset - state.dragOffset) *
+                          (1 / state.scaleFactor));
                   node.onStatusChanged ??= (n, e) {
                     widget.controller.streamController
                         .add((NodeData(n.uuid), e));
@@ -372,7 +386,7 @@ const double _boldGap = 200;
 class InfiniteCanvasPainter extends CustomPainter {
   final Offset offset;
   final double scale;
-  final List<INode> data;
+  final List<NodeModel> data;
   final Set<Edge> edges;
   final Edge? focusedEdge;
   final BoardController controller;

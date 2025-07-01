@@ -1,13 +1,13 @@
 import 'package:flow_compose/src/nodes/edge.dart';
-import 'package:flow_compose/src/nodes/inode.dart';
+import 'package:flow_compose/src/nodes/node_model.dart';
 import 'package:flutter/material.dart';
 
 class BoardState {
   final double scaleFactor;
   final Offset dragOffset;
-  final List<INode> data;
   final Set<Edge> edges;
-  INode? focus;
+  final List<NodeModel> data;
+  String? focused;
   Edge? edgeFocused;
   Size? paintSize;
   final bool editable;
@@ -15,9 +15,9 @@ class BoardState {
   BoardState({
     this.scaleFactor = 1.0,
     this.dragOffset = Offset.zero,
-    this.data = const [],
     this.edges = const {},
-    this.focus,
+    this.data = const [],
+    this.focused,
     this.edgeFocused,
     this.paintSize,
     this.editable = true,
@@ -26,9 +26,9 @@ class BoardState {
   BoardState copyWith({
     double? scaleFactor,
     Offset? dragOffset,
-    List<INode>? data,
+    List<NodeModel>? data,
     Set<Edge>? edges,
-    INode? focus,
+    String? focused,
     Edge? edgeFocused,
     Size? paintSize,
     bool? editable,
@@ -38,7 +38,7 @@ class BoardState {
       dragOffset: dragOffset ?? this.dragOffset,
       data: data ?? this.data,
       edges: edges ?? this.edges,
-      focus: focus,
+      focused: focused,
       edgeFocused: edgeFocused,
       paintSize: paintSize ?? this.paintSize,
       editable: editable ?? this.editable,

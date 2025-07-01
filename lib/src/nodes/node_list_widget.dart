@@ -1,10 +1,10 @@
+import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 
-import 'inode.dart';
-
 class NodeListWidget extends StatefulWidget {
-  const NodeListWidget({super.key, required this.nodes});
-  final List<INode> nodes;
+  const NodeListWidget({super.key, required this.controller});
+  // final Map<String, SidebarNodeWidgetBuilder?> sidebarNodeRenderRegistry;
+  final BoardController controller;
 
   @override
   State<NodeListWidget> createState() => _NodeListWidgetState();
@@ -12,6 +12,8 @@ class NodeListWidget extends StatefulWidget {
 
 class _NodeListWidgetState extends State<NodeListWidget> {
   bool isExpanded = false;
+  late List<String> supportedTypes =
+      widget.controller.nodeRenderRegistry.keys.toList();
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +25,30 @@ class _NodeListWidgetState extends State<NodeListWidget> {
             SizedBox(
               height: 10,
             ),
-            ...widget.nodes.map((e) => Draggable(
-                data: e, feedback: e.fakeWidget(), child: _buildNode(e)))
+            ...supportedTypes.map((e) => Draggable(
+                data: e, feedback: fakeWidget(e), child: _buildNode(e)))
           ],
         ),
       ),
     );
   }
 
-  Widget _buildNode(INode node) {
+  Widget fakeWidget(String type) {
+    return Material(
+      elevation: 10,
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        width: 100,
+        height: 50,
+        child: Center(
+          child: Text(type),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNode(String type) {
+    ExtraNodeConfig config = widget.controller.getExtraNodeConfig(type);
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
       padding: EdgeInsets.all(8),
@@ -53,22 +70,23 @@ class _NodeListWidgetState extends State<NodeListWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                node.nodeName,
+                type,
                 style: TextStyle(fontWeight: FontWeight.bold),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 softWrap: true,
               ),
-              Tooltip(
-                message: node.description,
-                waitDuration: Duration(milliseconds: 500),
-                child: Text(
-                  node.description,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  softWrap: true,
-                ),
-              )
+              if (config.description != null)
+                Tooltip(
+                  message: config.description,
+                  waitDuration: Duration(milliseconds: 500),
+                  child: Text(
+                    config.description!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
+                  ),
+                )
             ],
           ))
         ],

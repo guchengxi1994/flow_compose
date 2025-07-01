@@ -4,18 +4,20 @@ import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'show_node_config_dialog.dart';
 
-class SimpleQAConfigWidget extends StatefulWidget {
+class SimpleQAConfigWidget extends ConsumerStatefulWidget {
   const SimpleQAConfigWidget({super.key, this.data});
   final Map<String, dynamic>? data;
 
   @override
-  State<SimpleQAConfigWidget> createState() => _SimpleQAConfigWidgetState();
+  ConsumerState<SimpleQAConfigWidget> createState() =>
+      _SimpleQAConfigWidgetState();
 }
 
-class _SimpleQAConfigWidgetState extends State<SimpleQAConfigWidget> {
+class _SimpleQAConfigWidgetState extends ConsumerState<SimpleQAConfigWidget> {
   late final TextEditingController _inputController = TextEditingController()
     ..text = widget.data?["input"]?.toString() ?? "";
   late final TextEditingController _outputController = TextEditingController()
@@ -79,16 +81,16 @@ class _SimpleQAConfigWidgetState extends State<SimpleQAConfigWidget> {
 
 class SimpleQAWidget extends StatefulWidget {
   const SimpleQAWidget({super.key, required this.node});
-  final INode node;
+  final NodeModel node;
 
   @override
   State<SimpleQAWidget> createState() => _SimpleQAWidgetState();
 }
 
 class _SimpleQAWidgetState extends State<SimpleQAWidget> {
-  late String input = widget.node.data?["input"] as String? ?? "";
-  late String output = widget.node.data?["output"] as String? ?? "";
-  late String prompt = widget.node.data?["prompt"] as String? ?? "";
+  late String input = widget.node.data["input"] as String? ?? "";
+  late String output = widget.node.data["output"] as String? ?? "";
+  late String prompt = widget.node.data["prompt"] as String? ?? "";
 
   @override
   Widget build(BuildContext context) {
@@ -201,48 +203,5 @@ class _SimpleQAWidgetState extends State<SimpleQAWidget> {
             ),
           ),
         ));
-  }
-}
-
-class SimpleQaNode extends INode {
-  SimpleQaNode(
-      {required super.label,
-      required super.uuid,
-      required super.offset,
-      super.height = 200,
-      super.width = 300,
-      super.nodeName = "单输入输出问答节点",
-      super.description = "仅支持一个输入和一个输出的节点",
-      super.builder,
-      super.builderName = "SimpleQaNode",
-      super.data}) {
-    builder = (context, node) => SimpleQAWidget(
-          node: node,
-        );
-  }
-
-  factory SimpleQaNode.fromJson(Map<String, dynamic> json) {
-    String uuid = json["uuid"] ?? "";
-    String label = json["label"] ?? "";
-    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
-    double width = json["width"] ?? 300;
-    double height = json["height"] ?? 400;
-    String nodeName = json["nodeName"] ?? "base";
-    String description =
-        json["description"] ?? "Base node, just for testing purposes";
-    String builderName = json["builderName"] ?? "base";
-    Map<String, dynamic>? data = json["data"];
-
-    return SimpleQaNode(
-      offset: offset,
-      width: width,
-      height: height,
-      nodeName: nodeName,
-      description: description,
-      builderName: builderName,
-      label: label,
-      uuid: uuid,
-      data: data,
-    );
   }
 }
