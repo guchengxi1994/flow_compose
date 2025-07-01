@@ -278,7 +278,7 @@ class _InfiniteDrawingBoardState extends State<InfiniteDrawingBoard> {
                                 height: double.infinity,
                               ))),
                       ...state.data.map((e) {
-                        // print(e.prevData);
+                        print("e.uuid  ${e.uuid}");
 
                         return NodeWidget<INode>(
                           hasPrev: e.prevData != null && e.prevData!.isNotEmpty,

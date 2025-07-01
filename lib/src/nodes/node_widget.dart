@@ -92,7 +92,7 @@ class _NodeWidgetState<T extends INode> extends State<NodeWidget> {
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         )
-                      : node.builder!(context),
+                      : node.builder!(context, node),
                 )),
             Positioned(
                 right: 0,

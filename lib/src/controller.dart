@@ -145,6 +145,7 @@ class BoardController {
   String dumpToString() {
     List<Edge> edges = state.value.edges.toList();
     List<INode> nodes = state.value.data;
+
     return """
       {
         "nodes": [
@@ -180,5 +181,16 @@ class BoardController {
 
   INode? getNodeData(String uuid) {
     return state.value.data.firstWhereOrNull((element) => element.uuid == uuid);
+  }
+
+  void updateNode(INode node) {
+    List<INode> nodes = state.value.data.map((e) {
+      if (e.uuid == node.uuid) {
+        return node;
+      }
+      return e;
+    }).toList();
+
+    state.value = state.value.copyWith(data: nodes);
   }
 }

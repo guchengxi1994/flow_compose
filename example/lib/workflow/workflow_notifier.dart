@@ -43,6 +43,10 @@ class WorkflowNotifier extends Notifier<INode?> {
     return null;
   }
 
+  updateNode(INode node) {
+    controller.updateNode(node);
+  }
+
   changeCurrentNode(INode? node) {
     if (node?.getUuid() == state?.getUuid()) {
       return;

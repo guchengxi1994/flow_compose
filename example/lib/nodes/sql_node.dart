@@ -1,20 +1,23 @@
 import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
+import 'package:example/workflow/workflow_notifier.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqlparser/sqlparser.dart' as sql;
 
 import 'show_node_config_dialog.dart';
 
-class SqlNodeConfigWidget extends StatefulWidget {
+class SqlNodeConfigWidget extends ConsumerStatefulWidget {
   const SqlNodeConfigWidget({super.key, this.data});
   final Map<String, dynamic>? data;
 
   @override
-  State<SqlNodeConfigWidget> createState() => _SqlNodeConfigWidgetState();
+  ConsumerState<SqlNodeConfigWidget> createState() =>
+      _SqlNodeConfigWidgetState();
 }
 
-class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
+class _SqlNodeConfigWidgetState extends ConsumerState<SqlNodeConfigWidget> {
   late final TextEditingController _sqlController = TextEditingController()
     ..text = widget.data?["sql"]?.toString() ?? "";
   late List<String> _params =
@@ -31,6 +34,13 @@ class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final nodeInfo =
+        ref.read(workflowProvider.notifier).controller.state.value.data;
+
+    for (final i in nodeInfo) {
+      debugPrint("${i.uuid} ${i.nodeName} ${i.data} ${i.prevData}");
+    }
+
     return SingleChildScrollView(
       child: Column(
           spacing: 10,
@@ -89,7 +99,7 @@ class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
 
 class SqlNodeWidget extends StatefulWidget {
   const SqlNodeWidget({super.key, required this.node});
-  final SqlNode node;
+  final INode node;
 
   @override
   State<SqlNodeWidget> createState() => _SqlNodeWidgetState();
@@ -154,7 +164,7 @@ class SqlNode extends INode {
       super.builderName = "SqlNode",
       super.data,
       super.builder}) {
-    builder = (c) => SqlNodeWidget(node: this);
+    builder = (c, n) => SqlNodeWidget(node: n);
   }
 
   factory SqlNode.fromJson(Map<String, dynamic> json) {

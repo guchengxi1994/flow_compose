@@ -1,7 +1,9 @@
 import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
+import 'package:example/workflow/workflow_notifier.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'show_node_config_dialog.dart';
 
@@ -90,9 +92,11 @@ class LoginNode extends INode {
       super.nodeName = "登录节点",
       super.builderName = "LoginNode",
       super.data}) {
-    builder = (context) => LoginNodeWidget(
-          node: this,
-        );
+    builder = (context, n) {
+      return LoginNodeWidget(
+        node: n,
+      );
+    };
   }
 
   factory LoginNode.fromJson(Map<String, dynamic> json) {
@@ -140,12 +144,12 @@ class LoginNode extends INode {
   }
 }
 
-class LoginNodeWidget extends StatelessWidget {
+class LoginNodeWidget extends ConsumerWidget {
   const LoginNodeWidget({super.key, required this.node});
   final INode node;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return HammerAnimation(
         uuid: node.uuid,
         child: GestureDetector(
@@ -153,7 +157,9 @@ class LoginNodeWidget extends StatelessWidget {
             await showNodeConfigDialog(context, node, data: node.data)
                 .then((v) {
               if (v != null) {
+                debugPrint("node value ${v.toString()}");
                 node.data = v;
+                ref.read(workflowProvider.notifier).updateNode(node);
               }
             });
           },

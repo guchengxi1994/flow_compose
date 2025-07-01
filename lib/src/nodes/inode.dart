@@ -2,7 +2,7 @@ import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
 
 typedef OnNodeStatusChanged = void Function(INode node, EventType eventType);
-typedef NodeBuilder = Widget Function(BuildContext context);
+typedef NodeBuilder = Widget Function(BuildContext context, INode node);
 
 class INode {
   final double width;

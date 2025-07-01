@@ -79,7 +79,7 @@ class _SimpleQAConfigWidgetState extends State<SimpleQAConfigWidget> {
 
 class SimpleQAWidget extends StatefulWidget {
   const SimpleQAWidget({super.key, required this.node});
-  final SimpleQaNode node;
+  final INode node;
 
   @override
   State<SimpleQAWidget> createState() => _SimpleQAWidgetState();
@@ -216,8 +216,8 @@ class SimpleQaNode extends INode {
       super.builder,
       super.builderName = "SimpleQaNode",
       super.data}) {
-    builder = (context) => SimpleQAWidget(
-          node: this,
+    builder = (context, node) => SimpleQAWidget(
+          node: node,
         );
   }
 
