@@ -1,5 +1,4 @@
 import 'package:flow_compose/src/nodes/nodes.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 typedef OnNodeDrag = void Function(Offset offset);

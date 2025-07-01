@@ -1,5 +1,9 @@
 import 'dart:convert';
 
+import 'package:example/nodes/login_node.dart';
+import 'package:example/nodes/simple_qa_node.dart';
+import 'package:example/nodes/sql_node.dart';
+import 'package:example/nodes/start_node.dart';
 import 'package:example/style.dart';
 import 'package:example/workflow/workflow_graph.dart';
 import 'package:flow_compose/flow_compose.dart';
@@ -117,6 +121,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   Map<String, dynamic> data = jsonDecode(textController.text);
                   List<NodeModel> nodes = [];
                   List<Edge> edges = [];
+
                   for (var node in data["nodes"]) {
                     // nodes.add(INode.fromJson(node));
                     nodes.add(NodeModel.fromJson(node));

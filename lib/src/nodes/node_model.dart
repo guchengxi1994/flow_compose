@@ -92,7 +92,7 @@ class NodeModel {
     Map<String, dynamic>? data = json["data"];
     Map<String, Map<String, dynamic>> prevData = json['prevData'] ?? {};
 
-    return NodeModel(
+    NodeModel node = NodeModel(
         type: type,
         offset: offset,
         width: width,
@@ -102,5 +102,10 @@ class NodeModel {
         uuid: uuid,
         prevData: prevData,
         label: label);
+
+    // TODO: 监听节点状态
+    node.onStatusChanged = (model, type) {};
+
+    return node;
   }
 }
