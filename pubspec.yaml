@@ -1,11 +1,11 @@
 name: flow_compose
 description: "flow chart for flutter."
-version: 0.0.4
+version: 1.0.0
 homepage: https://github.com/guchengxi1994/flow_compose
 
 environment:
   sdk: ^3.5.4
-  flutter: ">=1.17.0"
+  flutter: ">=3.27.0"
 
 dependencies:
   collection: ^1.19.0

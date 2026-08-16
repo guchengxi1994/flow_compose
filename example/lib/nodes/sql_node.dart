@@ -38,7 +38,7 @@ class _SqlNodeConfigWidgetState extends ConsumerState<SqlNodeConfigWidget> {
         ref.read(workflowProvider.notifier).controller.state.value.data;
 
     for (final i in nodeInfo) {
-      debugPrint("${i.uuid} ${i.nodeName} ${i.data} ${i.prevData}");
+      debugPrint("${i.uuid} ${i.type} ${i.data} ${i.prevData}");
     }
 
     return SingleChildScrollView(
@@ -99,7 +99,7 @@ class _SqlNodeConfigWidgetState extends ConsumerState<SqlNodeConfigWidget> {
 
 class SqlNodeWidget extends StatefulWidget {
   const SqlNodeWidget({super.key, required this.node});
-  final INode node;
+  final NodeModel node;
 
   @override
   State<SqlNodeWidget> createState() => _SqlNodeWidgetState();
@@ -107,7 +107,7 @@ class SqlNodeWidget extends StatefulWidget {
 
 class _SqlNodeWidgetState extends State<SqlNodeWidget> {
   late Map<String, dynamic> data =
-      widget.node.data ?? {"sql": "", "params": []};
+      widget.node.data.isEmpty ? {"sql": "", "params": []} : widget.node.data;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +127,7 @@ class _SqlNodeWidgetState extends State<SqlNodeWidget> {
             });
           },
           child: Container(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: Colors.white,
@@ -149,46 +149,5 @@ class _SqlNodeWidgetState extends State<SqlNodeWidget> {
             ),
           ),
         ));
-  }
-}
-
-class SqlNode extends INode {
-  SqlNode(
-      {required super.label,
-      required super.uuid,
-      required super.offset,
-      super.description = "SQL节点执行SQL语句",
-      super.height = 150,
-      super.width = 300,
-      super.nodeName = "SQL节点",
-      super.builderName = "SqlNode",
-      super.data,
-      super.builder}) {
-    builder = (c, n) => SqlNodeWidget(node: n);
-  }
-
-  factory SqlNode.fromJson(Map<String, dynamic> json) {
-    String uuid = json["uuid"] ?? "";
-    String label = json["label"] ?? "";
-    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
-    double width = json["width"] ?? 300;
-    double height = json["height"] ?? 400;
-    String nodeName = json["nodeName"] ?? "base";
-    String description =
-        json["description"] ?? "Base node, just for testing purposes";
-    String builderName = json["builderName"] ?? "base";
-    Map<String, dynamic>? data = json["data"];
-
-    return SqlNode(
-      offset: offset,
-      width: width,
-      height: height,
-      nodeName: nodeName,
-      description: description,
-      builderName: builderName,
-      label: label,
-      uuid: uuid,
-      data: data,
-    );
   }
 }

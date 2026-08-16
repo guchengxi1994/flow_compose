@@ -6,9 +6,9 @@ import 'login_node.dart';
 import 'simple_qa_node.dart';
 
 Future<Map<String, dynamic>?> showNodeConfigDialog(
-    BuildContext context, INode node,
+    BuildContext context, NodeModel node,
     {Map<String, dynamic>? data, String name = "节点配置"}) async {
-  if (node.builderName == "SimpleQaNode") {
+  if (node.type == "SimpleQaNode") {
     return showGeneralDialog(
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 300),
@@ -45,7 +45,7 @@ Future<Map<String, dynamic>?> showNodeConfigDialog(
         });
   }
 
-  if (node.builderName == "LoginNode") {
+  if (node.type == "LoginNode") {
     return showGeneralDialog(
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 300),
@@ -82,7 +82,7 @@ Future<Map<String, dynamic>?> showNodeConfigDialog(
         });
   }
 
-  if (node.builderName == "SqlNode") {
+  if (node.type == "SqlNode") {
     return showGeneralDialog(
         barrierColor: Colors.transparent,
         transitionDuration: const Duration(milliseconds: 300),

@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flow_compose/src/board_style.dart';
-import 'package:flow_compose/src/nodes/edge.dart';
-import 'package:flow_compose/src/nodes/events.dart';
-import 'package:flow_compose/src/nodes/inode.dart';
+import 'package:flow_compose/src/nodes/nodes.dart';
 import 'package:flow_compose/src/state.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -13,8 +11,19 @@ typedef OnEdgeCreated = void Function(Edge edge);
 
 class BoardController {
   final ValueNotifier<BoardState> state;
-  // nodes which can be dragged to board
-  final List<INode> nodes;
+  final Map<String, NodeWidgetBuilder> nodeRenderRegistry = {};
+  final Map<String, ExtraNodeConfig?> _nodeConfigRegistry = {};
+
+  ExtraNodeConfig getExtraNodeConfig(String nodeType) {
+    return _nodeConfigRegistry[nodeType] ?? ExtraNodeConfig();
+  }
+
+  void setConfig(String nodeType, ExtraNodeConfig config) {
+    if (!nodeRenderRegistry.containsKey(nodeType)) {
+      return;
+    }
+    _nodeConfigRegistry[nodeType] = config;
+  }
 
   final bool confirmBeforeDelete;
 
@@ -29,7 +38,6 @@ class BoardController {
 
   BoardController({
     BoardState? initialState,
-    required this.nodes,
     this.confirmBeforeDelete = false,
     this.style = const BoardStyle(),
     this.onEdgeCreated,
@@ -97,7 +105,7 @@ class BoardController {
     streamController.close();
   }
 
-  List<List<String>> getPath(INode node) {
+  List<List<String>> getPath(NodeModel node) {
     Map<String, List<String>> m = _buildReverseMap();
     return _findPathsToRoot(node.uuid, m);
   }
@@ -135,16 +143,16 @@ class BoardController {
     return paths;
   }
 
-  setCurrentFocus(INode? node) {
-    if (node == value.focus) {
+  setCurrentFocus(NodeModel? node) {
+    if (node?.uuid == value.focused) {
       return;
     }
-    state.value = state.value.copyWith(focus: node);
+    state.value = state.value.copyWith(focused: node?.uuid);
   }
 
   String dumpToString() {
     List<Edge> edges = state.value.edges.toList();
-    List<INode> nodes = state.value.data;
+    List<NodeModel> nodes = state.value.data;
 
     return """
       {
@@ -158,33 +166,17 @@ class BoardController {
     """;
   }
 
-  @Deprecated(
-      "has some bug, use `reCreate` instead, will be removed in the future")
-  void loadFromString(String json) {
-    Map<String, dynamic> data = jsonDecode(json);
-    List<INode> nodes = [];
-    List<Edge> edges = [];
-    for (var node in data["nodes"]) {
-      nodes.add(INode.fromJson(node));
-    }
-    for (var edge in data["edges"]) {
-      edges.add(Edge.fromJson(edge));
-    }
-
-    state.value = BoardState(data: nodes, edges: edges.toSet());
-  }
-
-  void reCreate(List<INode> nodes, List<Edge> edges) {
+  void reCreate(List<NodeModel> nodes, List<Edge> edges) {
     state.value = BoardState(
         data: nodes, edges: edges.toSet(), editable: state.value.editable);
   }
 
-  INode? getNodeData(String uuid) {
+  NodeModel? getNodeData(String uuid) {
     return state.value.data.firstWhereOrNull((element) => element.uuid == uuid);
   }
 
-  void updateNode(INode node) {
-    List<INode> nodes = state.value.data.map((e) {
+  void updateNode(NodeModel node) {
+    List<NodeModel> nodes = state.value.data.map((e) {
       if (e.uuid == node.uuid) {
         return node;
       }
