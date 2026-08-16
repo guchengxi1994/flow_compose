@@ -1,20 +1,23 @@
 import 'package:example/hammer/hammer.dart';
 import 'package:example/style.dart';
+import 'package:example/workflow/workflow_notifier.dart';
 import 'package:flow_compose/flow_compose.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqlparser/sqlparser.dart' as sql;
 
 import 'show_node_config_dialog.dart';
 
-class SqlNodeConfigWidget extends StatefulWidget {
+class SqlNodeConfigWidget extends ConsumerStatefulWidget {
   const SqlNodeConfigWidget({super.key, this.data});
   final Map<String, dynamic>? data;
 
   @override
-  State<SqlNodeConfigWidget> createState() => _SqlNodeConfigWidgetState();
+  ConsumerState<SqlNodeConfigWidget> createState() =>
+      _SqlNodeConfigWidgetState();
 }
 
-class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
+class _SqlNodeConfigWidgetState extends ConsumerState<SqlNodeConfigWidget> {
   late final TextEditingController _sqlController = TextEditingController()
     ..text = widget.data?["sql"]?.toString() ?? "";
   late List<String> _params =
@@ -31,6 +34,13 @@ class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final nodeInfo =
+        ref.read(workflowProvider.notifier).controller.state.value.data;
+
+    for (final i in nodeInfo) {
+      debugPrint("${i.uuid} ${i.type} ${i.data} ${i.prevData}");
+    }
+
     return SingleChildScrollView(
       child: Column(
           spacing: 10,
@@ -89,7 +99,7 @@ class _SqlNodeConfigWidgetState extends State<SqlNodeConfigWidget> {
 
 class SqlNodeWidget extends StatefulWidget {
   const SqlNodeWidget({super.key, required this.node});
-  final SqlNode node;
+  final NodeModel node;
 
   @override
   State<SqlNodeWidget> createState() => _SqlNodeWidgetState();
@@ -97,7 +107,7 @@ class SqlNodeWidget extends StatefulWidget {
 
 class _SqlNodeWidgetState extends State<SqlNodeWidget> {
   late Map<String, dynamic> data =
-      widget.node.data ?? {"sql": "", "params": []};
+      widget.node.data.isEmpty ? {"sql": "", "params": []} : widget.node.data;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +127,7 @@ class _SqlNodeWidgetState extends State<SqlNodeWidget> {
             });
           },
           child: Container(
-            padding: const EdgeInsets.all(25),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: Colors.white,
@@ -139,46 +149,5 @@ class _SqlNodeWidgetState extends State<SqlNodeWidget> {
             ),
           ),
         ));
-  }
-}
-
-class SqlNode extends INode {
-  SqlNode(
-      {required super.label,
-      required super.uuid,
-      required super.offset,
-      super.description = "SQL节点执行SQL语句",
-      super.height = 150,
-      super.width = 300,
-      super.nodeName = "SQL节点",
-      super.builderName = "SqlNode",
-      super.data,
-      super.builder}) {
-    builder = (c) => SqlNodeWidget(node: this);
-  }
-
-  factory SqlNode.fromJson(Map<String, dynamic> json) {
-    String uuid = json["uuid"] ?? "";
-    String label = json["label"] ?? "";
-    Offset offset = Offset(json["offset"]["dx"], json["offset"]["dy"]);
-    double width = json["width"] ?? 300;
-    double height = json["height"] ?? 400;
-    String nodeName = json["nodeName"] ?? "base";
-    String description =
-        json["description"] ?? "Base node, just for testing purposes";
-    String builderName = json["builderName"] ?? "base";
-    Map<String, dynamic>? data = json["data"];
-
-    return SqlNode(
-      offset: offset,
-      width: width,
-      height: height,
-      nodeName: nodeName,
-      description: description,
-      builderName: builderName,
-      label: label,
-      uuid: uuid,
-      data: data,
-    );
   }
 }
