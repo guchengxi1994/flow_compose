@@ -1,3 +1,9 @@
+## 1.0.0
+
+* Introduce `FlowCanvas`, `FlowController`, and `FlowNodeDefinition` as the workflow-editor API.
+* Store edges by source and target port references, with graph JSON serialization independent of screen coordinates.
+* Add component palette, inspector configuration builders, typed ports, and directional Bezier connections.
+
 ## 0.0.5
 * **[IMPORTANT]** this version is not compatible with previous versions.
 
